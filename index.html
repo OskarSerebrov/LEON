@@ -797,35 +797,16 @@ function pauseSleep() {
 
 // Audio Player
 const player = document.getElementById('player');
-let audioCtx = null;
-let sourceNode = null;
-let gainNode = null;
-let isPlaying = false;
 let currentTrack = 0;
 let isRepeating = false;
 const tracks = [
   { name: 'Шум', src: 'Шум.mp3' },
   { name: 'Гроза', src: 'Гроза.mp3' }
 ];
-let buffers = {};
-let trackDuration = 0;
-let seekTo = 0;
 
 function initPlayer() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  gainNode = audioCtx.createGain();
-  gainNode.gain.value = 1;
-  gainNode.connect(audioCtx.destination);
-
   const volSlider = document.getElementById('volSlider');
-  volSlider.addEventListener('input', () => { gainNode.gain.value = volSlider.value; });
-
-  // Preload buffers
-  tracks.forEach((t, i) => {
-    fetch(t.src).then(r => r.arrayBuffer()).then(buf => {
-      audioCtx.decodeAudioData(buf, (decoded) => { buffers[i] = decoded; });
-    }).catch(() => {});
-  });
+  volSlider.addEventListener('input', () => { player.volume = volSlider.value; });
 
   const btns = document.querySelectorAll('.track-btn');
   btns.forEach((btn, i) => {
@@ -833,119 +814,55 @@ function initPlayer() {
       btns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentTrack = i;
-      stopPlayback();
-      startPlayback();
+      player.src = tracks[i].src;
+      player.loop = isRepeating;
+      player.play().then(() => {
+        document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+        document.getElementById('playBtn').classList.add('playing');
+        document.getElementById('playerInfo').textContent = '🎵 ' + tracks[i].name;
+      }).catch(() => {});
     });
   });
-
+  player.addEventListener('timeupdate', () => {
+    if (player.duration) {
+      const pct = (player.currentTime / player.duration) * 100;
+      document.getElementById('progFill').style.width = pct + '%';
+      document.getElementById('progThumb').style.left = pct + '%';
+      document.getElementById('progCurrent').textContent = fmtTime(player.currentTime);
+    }
+  });
+  player.addEventListener('loadedmetadata', () => {
+    document.getElementById('progTotal').textContent = fmtTime(player.duration);
+  });
   const bar = document.getElementById('progBar');
   bar.addEventListener('click', (e) => {
     const rect = bar.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    if (buffers[currentTrack]) {
-      trackDuration = buffers[currentTrack].duration;
-      seekTo = pct * trackDuration;
-      if (isPlaying) { stopPlayback(); startPlayback(); }
-    } else {
-      player.currentTime = pct * (player.duration || 1);
-    }
+    player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
   });
 }
 
-function startPlayback() {
-  const buf = buffers[currentTrack];
-  if (!buf) {
-    // Fallback to audio element
-    player.src = tracks[currentTrack].src;
+function togglePlay() {
+  if (player.paused) {
+    if (!player.src) player.src = tracks[currentTrack].src;
     player.loop = isRepeating;
     player.play().then(() => {
-      isPlaying = true;
-      updatePlayUI(true);
+      document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+      document.getElementById('playBtn').classList.add('playing');
+      document.getElementById('playerInfo').textContent = '🎵 ' + tracks[currentTrack].name;
     }).catch(() => {});
-    return;
-  }
-
-  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-
-  sourceNode = audioCtx.createBufferSource();
-  sourceNode.buffer = buf;
-  sourceNode.loop = isRepeating;
-  sourceNode.connect(gainNode);
-  sourceNode.start(0, seekTo);
-  isPlaying = true;
-  trackDuration = buf.duration;
-  updatePlayUI(true);
-  document.getElementById('progTotal').textContent = fmtTime(trackDuration);
-
-  // Progress updates
-  sourceNode._startTime = audioCtx.currentTime;
-  clearInterval(window._progInt);
-  window._progInt = setInterval(() => {
-    if (isPlaying && audioCtx && sourceNode) {
-      const elapsed = audioCtx.currentTime - sourceNode._startTime;
-      const pct = Math.min(100, (elapsed / trackDuration) * 100);
-      document.getElementById('progFill').style.width = pct + '%';
-      document.getElementById('progThumb').style.left = pct + '%';
-      document.getElementById('progCurrent').textContent = fmtTime(elapsed);
-    }
-  }, 200);
-
-  sourceNode.onended = () => {
-    if (!isRepeating) { stopPlayback(); updatePlayUI(false); }
-  };
-}
-
-function stopPlayback() {
-  if (sourceNode) { try { sourceNode.stop(); } catch(e) {} sourceNode = null; }
-  clearInterval(window._progInt);
-  isPlaying = false;
-  seekTo = 0;
-}
-
-function updatePlayUI(playing) {
-  if (playing) {
-    document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
-    document.getElementById('playBtn').classList.add('playing');
-    document.getElementById('playerInfo').textContent = '🎵 ' + tracks[currentTrack].name;
   } else {
+    player.pause();
     document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
     document.getElementById('playBtn').classList.remove('playing');
-  }
-}
-
-function togglePlay() {
-  if (isPlaying) {
-    if (sourceNode && audioCtx) {
-      const elapsed = audioCtx.currentTime - (sourceNode._startTime || audioCtx.currentTime);
-      seekTo = elapsed;
-      stopPlayback();
-    } else {
-      player.pause();
-      seekTo = player.currentTime;
-      isPlaying = false;
-    }
-    updatePlayUI(false);
     document.getElementById('playerInfo').textContent = '⏸ ' + tracks[currentTrack].name;
-  } else {
-    if (buffers[currentTrack]) {
-      startPlayback();
-    } else {
-      player.src = tracks[currentTrack].src;
-      player.currentTime = seekTo;
-      player.loop = isRepeating;
-      player.play().then(() => { isPlaying = true; updatePlayUI(true); }).catch(() => {});
-      updatePlayUI(true);
-    }
   }
 }
 
 function stopPlay() {
-  stopPlayback();
-  if (!player.paused) { player.pause(); player.currentTime = 0; }
-  seekTo = 0;
-  isPlaying = false;
-  updatePlayUI(false);
+  player.pause();
+  player.currentTime = 0;
+  document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+  document.getElementById('playBtn').classList.remove('playing');
   document.getElementById('playerInfo').textContent = 'Выберите трек';
   document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('progFill').style.width = '0%';
@@ -956,7 +873,6 @@ function stopPlay() {
 function toggleRepeat() {
   isRepeating = !isRepeating;
   player.loop = isRepeating;
-  if (sourceNode) sourceNode.loop = isRepeating;
   document.getElementById('repeatBtn').classList.toggle('repeat', isRepeating);
 }
 
