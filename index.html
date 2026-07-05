@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D0B1A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="icon.svg">
+<title>Леон · дневник</title>
+<style>
+ :root {
+ --bg: #0D0B1A;
+ --card: rgba(255,255,255,.06);
+ --card-solid: #1A1535;
+ --sep: rgba(255,255,255,.08);
+ --text: #FFFFFF;
+ --secondary: rgba(255,255,255,.45);
+ --tint: #7C3AED;
+ --tint-light: #A78BFA;
+ --green: #34C759;
+ --orange: #FF9500;
+ --blue: #3B82F6;
+ --red: #FF3B30;
+ --purple: #7C3AED;
+ --radius: 20px;
+ --rs: 12px;
+ }
+
+ * {
+ margin: 0; padding: 0; box-sizing: border-box;
+ font-variant-numeric: tabular-nums;
+ }
+
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+ background: var(--bg);
+ background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,.12) 0%, transparent 100%);
+ min-height: 100vh;
+ padding: 0 0 20px;
+ color: var(--text);
+ -webkit-font-smoothing: antialiased;
+ }
+
+ .container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
+
+ .header {
+ padding: 28px 0 8px;
+ text-align: center;
+ }
+ .header .title { font-size: 42px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+
+ .header h1 {
+ font-size: 34px;
+ font-weight: 700;
+ letter-spacing: -.5px;
+ color: var(--text);
+ }
+
+ .header .meta {
+ font-size: 15px;
+ font-weight: 400;
+ color: var(--secondary);
+ margin-top: 2px;
+ }
+
+ .header .clock {
+ font-size: 17px;
+ font-weight: 600;
+ color: var(--tint);
+ margin-top: 6px;
+ letter-spacing: .5px;
+ }
+
+ .card {
+ background: var(--card);
+ backdrop-filter: blur(20px);
+ -webkit-backdrop-filter: blur(20px);
+ border-radius: var(--radius);
+ padding: 16px 20px;
+ margin-bottom: 10px;
+ border: 1px solid var(--sep);
+ }
+
+ .card-head {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ margin-bottom: 12px;
+ }
+
+ .card-icon {
+ width: 32px; height: 32px;
+ border-radius: 8px;
+ display: flex; align-items: center; justify-content: center;
+ font-size: 16px;
+ flex-shrink: 0;
+ }
+
+ .card-icon.creon { background: rgba(245,158,11,.15); }
+ .card-icon.enter { background: rgba(59,130,246,.15); }
+ .card-icon.bath { background: rgba(56,189,248,.15); }
+ 
+
+ .card-title { flex: 1; }
+ .card-title h2 { font-size: 17px; font-weight: 600; color: #fff; }
+ .card-title p { font-size: 13px; color: rgba(255,255,255,.35); font-weight: 400; margin-top: 1px; }
+
+ .row {
+ background: rgba(255,255,255,.04);
+ border-radius: var(--rs);
+ padding: 10px 14px;
+ margin-bottom: 10px;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ }
+
+ .row .l {
+ font-size: 13px;
+ font-weight: 500;
+ color: var(--secondary);
+ }
+
+ .row .v {
+ font-size: 17px;
+ font-weight: 600;
+ }
+
+ .row .v.ready { color: var(--green); }
+ .row .v.wait { color: var(--orange); }
+
+ .btn {
+ width: 100%; padding: 14px;
+ border: none; border-radius: var(--rs);
+ font-size: 16px; font-weight: 600;
+ cursor: pointer;
+ font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+ transition: opacity .2s;
+ }
+
+ .btn:active { opacity: .7; }
+ .btn:disabled { opacity: .3; cursor: default; }
+
+ .btn-creon { background: linear-gradient(135deg, #D97706, #F59E0B); color: #fff; }
+ .btn-enter { background: linear-gradient(135deg, #2563EB, #3B82F6); color: #fff; }
+ .btn-bath { background: rgba(56,189,248,.15); color: #7DD3FC; border: 1px solid rgba(56,189,248,.2); }
+
+ .sleep-card {
+  background: linear-gradient(145deg, #1E1135, #0F1A3A) !important;
+  border-color: rgba(255,255,255,.08) !important;
+  border-radius: 28px !important;
+  padding: 20px !important;
+ }
+
+ .sleep-visor { width: 100%; max-width: 320px; margin: 0 auto; }
+ .sleep-visor svg { display: block; width: 100%; height: 100%; }
+ .sleep-visor .arc.done { stroke: #7C3AED; opacity: .7; }
+ .sleep-visor .arc.now { stroke: #A78BFA; opacity: 1; filter: drop-shadow(0 0 10px rgba(167,139,250,.4)); }
+ .sleep-visor .oval { cursor: pointer; transition: opacity .2s; }
+ .sleep-visor .oval:hover { opacity: .85; }
+
+ .sleep-stats-row { display: flex; gap: 8px; margin: 12px 0 4px; }
+ .sleep-stats-row > div { flex: 1; background: rgba(255,255,255,.04); border-radius: 12px; padding: 8px 10px; text-align: center; }
+ .sleep-stats-row .ss-l { display: block; font-size: 10px; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .5px; }
+ .sleep-stats-row .ss-v { display: block; font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; }
+
+ #sleepActions { display: flex; flex-direction: column; gap: 8px; }
+ #sleepActions .row2 { display: flex; gap: 8px; }
+ #sleepActions .row2 .sleep-btn { flex: 1; }
+ #sleepActions .row3 { display: flex; gap: 6px; }
+ #sleepActions .row3 .sleep-btn { flex: 1; min-width: 0; padding: 14px 6px; font-size: 13px; }
+
+ .sleep-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 16px;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+ }
+ .sleep-btn:active { transform: scale(.97); }
+ .sleep-btn.prim { background: linear-gradient(135deg, #7C3AED, #6D28D9); color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,.3); }
+ .sleep-btn.sec { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.1); }
+ .sleep-btn.sec:hover { background: rgba(255,255,255,.12); }
+
+ .subnote {
+ font-size: 13px;
+ color: rgba(255,255,255,.3);
+ text-align: center;
+ padding: 6px 0 0;
+ }
+
+ .subnote.ok { color: var(--green); }
+
+ .scheme-item {
+ display: flex; align-items: center; gap: 10px;
+ padding: 10px 12px;
+ border-radius: var(--rs);
+ font-size: 14px;
+ margin-bottom: 6px;
+ }
+
+ .scheme-item:last-child { margin-bottom: 0; }
+
+ .scheme-item .icon { font-size: 18px; width: 24px; text-align: center; }
+ .scheme-item .name { font-weight: 600; color: #fff; }
+ .scheme-item .desc { color: rgba(255,255,255,.4); font-size: 12px; margin-top: 1px; }
+
+ .scheme-item.gold { background: rgba(245,158,11,.1); }
+ .scheme-item.blue { background: rgba(59,130,246,.1); }
+ .scheme-item.sage { background: rgba(52,199,89,.08); }
+
+ .scheme-foot {
+ font-size: 12px; color: var(--secondary);
+ text-align: center; padding-top: 8px;
+  }
+
+        .date-strip {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 12px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 4px;
+        }
+
+        .date-strip .d {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: all .15s;
+            min-width: 48px;
+        }
+
+        .date-strip .d:hover { background: rgba(255,255,255,.08); }
+
+        .date-strip .d .dw {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .date-strip .d .dn {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 1px;
+        }
+
+        .date-strip .d.sel {
+            background: var(--tint);
+        }
+
+        .date-strip .d.sel .dw,
+        .date-strip .d.sel .dn {
+            color: #fff;
+        }
+
+        .date-strip .d.today .dn {
+            color: var(--tint);
+        }
+
+        .date-strip .d.sel.today .dn {
+            color: #fff;
+        }
+
+        .sec-nav {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0 4px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            justify-content: flex-start;
+        }
+
+        .sec-nav::-webkit-scrollbar { display: none; }
+
+        .sec-nav button {
+            background: rgba(255,255,255,.08);
+            border: none;
+            border-radius: 100px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,.5);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .15s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .sec-nav button:hover {
+            background: rgba(255,255,255,.12);
+            color: #fff;
+        }
+
+        .sec-nav button.active {
+            background: var(--tint);
+            color: #fff;
+        }
+
+        .hist-reset {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--tint);
+            cursor: pointer;
+            padding: 4px 8px;
+            font-family: inherit;
+        }
+
+
+
+ .hist-date {
+ font-size: 13px;
+ font-weight: 600;
+ color: rgba(255,255,255,.3);
+ padding: 8px 0 4px;
+ text-transform: uppercase;
+ letter-spacing: .5px;
+ }
+
+ .hist-row {
+ display: flex; align-items: stretch;
+ }
+
+ .hist-row .bar {
+ width: 4px;
+ border-radius: 4px 0 0 4px;
+ flex-shrink: 0;
+ }
+
+ .hist-row.cr .bar { background: var(--orange); }
+ .hist-row.en .bar { background: var(--tint); }
+ .hist-row.ba .bar { background: #26A69A; }
+ .hist-row.sl .bar { background: var(--purple); }
+
+ .hist-row + .hist-row {
+ border-top: 1px solid var(--sep);
+ }
+
+ .hist-row .body {
+ flex: 1;
+ display: flex; justify-content: space-between; align-items: center;
+ padding: 10px 6px 10px 10px;
+ font-size: 15px;
+ gap: 6px;
+ }
+
+ .hist-row .body .left {
+ display: flex; align-items: center; gap: 8px;
+ flex: 1; min-width: 0;
+ }
+
+ .hist-row .badge {
+ font-weight: 600;
+ flex-shrink: 0;
+ }
+
+ .hist-row .dur {
+ font-weight: 700;
+ color: var(--purple);
+ font-size: 13px;
+ flex-shrink: 0;
+ }
+
+ .hist-row .time {
+ color: rgba(255,255,255,.35);
+ font-size: 13px;
+ font-weight: 500;
+ flex-shrink: 0;
+ }
+
+ .hist-row .act {
+ background: none; border: none;
+ font-size: 14px; cursor: pointer;
+ color: rgba(255,255,255,.2); padding: 4px;
+ opacity: 0; transition: opacity .15s;
+ }
+
+ .hist-row:hover .act { opacity: 1; }
+ .hist-row .act:hover { color: rgba(255,255,255,.5); }
+ .hist-row .act.del:hover { color: var(--red); }
+
+ .empty {
+ color: rgba(255,255,255,.3);
+ text-align: center;
+ padding: 24px;
+ font-size: 15px;
+ }
+
+ .footer {
+ text-align: center;
+ padding: 24px 0 16px;
+ font-size: 13px;
+ color: rgba(255,255,255,.25);
+ }
+
+ .footer span { color: var(--tint); }
+
+ .modal-overlay {
+ position: fixed; inset: 0;
+ background: rgba(0,0,0,.4);
+ z-index: 100; display: none;
+ align-items: center; justify-content: center;
+ padding: 24px;
+ }
+
+ .modal {
+ background: var(--card);
+ border-radius: 20px;
+ max-width: 360px;
+ width: 100%;
+ padding: 24px;
+ box-shadow: 0 20px 60px rgba(0,0,0,.2);
+ }
+
+ .modal-head {
+ display: flex; justify-content: space-between; align-items: center;
+ font-size: 20px; font-weight: 700;
+ margin-bottom: 16px;
+ }
+
+ .modal-head button {
+ background: none; border: none;
+ font-size: 20px; cursor: pointer;
+ color: var(--secondary); padding: 4px;
+ }
+
+ .modal-body .tag {
+ font-size: 15px; font-weight: 600;
+ padding: 10px 14px;
+ background: rgba(255,255,255,.04);
+ border-radius: var(--rs);
+ margin-bottom: 14px;
+ }
+
+ .modal-body .field { margin-bottom: 14px; }
+
+ .modal-body .field label {
+ display: block;
+ font-size: 12px; font-weight: 600;
+ color: rgba(255,255,255,.35);
+ margin-bottom: 4px;
+ text-transform: uppercase;
+ letter-spacing: .5px;
+ }
+
+ .modal-body .field input {
+ width: 100%; padding: 10px 14px;
+ border: 2px solid rgba(255,255,255,.1);
+ border-radius: var(--rs);
+ font-size: 17px; font-weight: 600;
+ font-family: inherit;
+ outline: none;
+ transition: border .2s;
+ }
+
+ .modal-body .field input:focus {
+ border-color: var(--tint);
+ }
+
+ .modal-foot {
+ display: flex; gap: 10px;
+ margin-top: 20px;
+ }
+
+ .modal-foot button {
+ flex: 1; padding: 12px;
+ border: none; border-radius: var(--rs);
+ font-size: 15px; font-weight: 600;
+ cursor: pointer;
+ font-family: inherit;
+ }
+
+ .modal-foot .save { background: var(--tint); color: #fff; }
+ .modal-foot .cancel { background: rgba(255,255,255,.08); color: #fff; }
+
+ @media (max-width: 480px) {
+ .header h1 { font-size: 28px; }
+ .row .v { font-size: 15px; }
+ }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div class="title"><span>Леон</span></div>
+<div class="clock" id="clock"></div>
+<div class="date-strip" id="dateStrip"></div>
+<div class="sec-nav" id="secNav"></div>
+</div>
+
+<div class="card sleep-card" id="sleepCard">
+<div class="sleep-visor" id="sleepVisor">
+<svg viewBox="0 0 280 180" width="100%" height="100%"></svg>
+</div>
+<div id="sleepActions">
+<button class="sleep-btn prim" onclick="tapSleep()" id="sleepBtn"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="white" d="M8 5v14l11-7z"/></svg> Начать сон</button>
+<div class="row3" id="sleepRow2" style="display:none;">
+<button class="sleep-btn sec" onclick="pauseSleep()" id="pauseBtn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg> Пауза</button>
+<button class="sleep-btn sec" onclick="resumeSleep()" id="resumeBtn">Продолжить</button>
+<button class="sleep-btn prim" onclick="wakeUp()" id="wakeBtn">Завершить</button>
+</div>
+</div>
+<div class="sleep-stats-row">
+<div><span class="ss-l" id="sleepLabel">Последний сон</span><span class="ss-v" id="sleepLast">—</span></div>
+<div><span class="ss-l">Всего за день</span><span class="ss-v" id="sleepTot">—</span></div>
+</div>
+</div>
+
+<div class="card" id="sec-bathm">
+<div class="card-head">
+<div class="card-icon bath"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7DD3FC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2z"/><path d="M6 12V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M2 16l1 3h18l1-3"/></svg></div>
+<div class="card-title">
+<h2>Утреннее купание</h2>
+<p>Эмоленты после купания</p>
+</div>
+</div>
+<div class="row"><div class="l">Статус</div><div class="v" id="bathMStatus">Ожидание</div></div>
+<button class="btn btn-bath" onclick="markBath(1)" id="bathMBtn">Купание завершено</button>
+</div>
+
+<div class="card" id="sec-creon">
+<div class="card-head">
+<div class="card-icon creon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 4.5a6 6 0 0 0-6 6c0 2.2 1.2 4.2 3 5.2V20h6v-4.3c1.8-1 3-3 3-5.2a6 6 0 0 0-6-6z"/><path d="M9 10.5a2.5 2.5 0 0 0 1.5 2.3"/></svg></div>
+<div class="card-title">
+<h2>Креон 10000</h2>
+<p>1 капсула во время еды, 3 раза</p>
+</div>
+</div>
+<div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="creonStat">0/3</div></div>
+<button class="btn btn-creon" onclick="giveCreon()" id="creonBtn">✓ Дал Креон</button>
+<div class="subnote" id="creonNote"></div>
+</div>
+
+<div class="card" id="sec-enter">
+<div class="card-head">
+<div class="card-icon enter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#93C5FD"/></svg></div>
+<div class="card-title">
+<h2>Энтеросгель</h2>
+<p>7 мл + вода, 3 раза</p>
+</div>
+</div>
+<div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="enterStat">0/3</div></div>
+<button class="btn btn-enter" onclick="giveEnter()" id="enterBtn">Дал Энтеросгель</button>
+<div class="subnote" id="enterNote"></div>
+</div>
+
+<div class="card" id="sec-bathe">
+<div class="card-head">
+<div class="card-icon bath"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+<div class="card-title">
+<h2>Вечернее купание</h2>
+<p>Перед сном · эмоленты после</p>
+</div>
+</div>
+<div class="row"><div class="l">Статус</div><div class="v" id="bathEStatus">Ожидание</div></div>
+<button class="btn btn-bath" onclick="markBath(0)" id="bathEBtn">Купание завершено</button>
+</div>
+
+<div class="card" id="sec-scheme" style="padding:14px 20px;">
+<div style="font-weight:600;font-size:15px;color:#fff;margin-bottom:10px;">💊 Схема приёма</div>
+<div class="scheme-item gold"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 4.5a6 6 0 0 0-6 6c0 2.2 1.2 4.2 3 5.2V20h6v-4.3c1.8-1 3-3 3-5.2a6 6 0 0 0-6-6z"/><path d="M9 10.5a2.5 2.5 0 0 0 1.5 2.3"/></svg><div><div class="name">Креон 10000</div><div class="desc">1 капсула во время еды, 3 раза в день</div></div></div>
+<div class="scheme-item blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#93C5FD"/></svg><div><div class="name">Энтеросгель</div><div class="desc">7 мл + 3 ч.л. воды, 3 раза в день</div></div></div>
+<div class="scheme-item sage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div><div class="name">Порядок приёма</div><div class="desc">Энтеросгель → 1 час → Креон (во время еды)</div></div></div>
+<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding-top:8px;">Дневные часы 06:00–21:00 · между разными лекарствами 1 час</div>
+</div>
+
+<div class="card" id="sec-hist" style="padding:16px 20px 8px;">
+<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:4px;">
+<button onclick="toggleAll()" style="background:none;border:none;font-size:14px;font-weight:500;color:var(--tint);cursor:pointer;font-family:inherit;padding:4px 8px;" id="allBtn">Вся история</button>
+</div>
+<div id="histList"></div>
+<div style="display:flex;gap:8px;padding:12px 0 4px;border-top:1px solid var(--sep);margin-top:8px;">
+<button class="hist-reset" onclick="resetDay()">Сбросить сегодня</button>
+<button class="hist-reset" onclick="exportData()" style="margin-left:auto;">Экспорт</button>
+</div>
+</div>
+
+<div class="footer">Сладких снов,<span>Леон</span></div>
+</div>
+
+<div class="modal-overlay" id="modal">
+<div class="modal">
+<div class="modal-head">
+<span>Редактировать</span>
+<button onclick="closeModal()">×</button>
+</div>
+<div class="modal-body" id="modalBody"></div>
+<div class="modal-foot">
+<button class="save" onclick="saveModal()">Сохранить</button>
+<button class="cancel" onclick="closeModal()">Отмена</button>
+</div>
+</div>
+</div>
+
+<script>
+ function ld(k) { const v = localStorage.getItem(k); if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; }
+
+ let hist = JSON.parse(localStorage.getItem('hist') || '[]');
+ let naps = JSON.parse(localStorage.getItem('naps') || '[]').map(s =>({
+  ...s, start: new Date(s.start), end: s.end ? new Date(s.end) : null,
+  pauses: (s.pauses || []).map(p =>({start: new Date(p.start), end: p.end ? new Date(p.end) : null}))
+ }));
+ let bathM = ld('bathM'), bathE = ld('bathE');
+  let curDate = new Date(); curDate.setHours(0,0,0,0);
+  let editIdx = -1;
+  let showAll = false;
+
+ let crN = 0, enN = 0, lastMed = null, lastTyp = null;
+ const COOL = 3600;
+
+ function loadMeds() {
+ const t = new Date().toDateString();
+ const s = JSON.parse(localStorage.getItem('meds') || '{}');
+ if (s.d === t) { crN = s.c || 0; enN = s.e || 0; }
+ lastMed = ld('lastMed'); lastTyp = localStorage.getItem('lastTyp');
+ }
+ loadMeds();
+
+ function saveMeds() {
+ localStorage.setItem('meds', JSON.stringify({d: new Date().toDateString(), c: crN, e: enN}));
+ if (lastMed) localStorage.setItem('lastMed', lastMed.toISOString()); else localStorage.removeItem('lastMed');
+ if (lastTyp) localStorage.setItem('lastTyp', lastTyp); else localStorage.removeItem('lastTyp');
+ }
+
+ function td(d) { return d.toDateString(); }
+ function ds(d) { return d.toDateString(); }
+ function now() { return new Date(); }
+
+ function fm(s) {
+ if (s<= 0) return '00:00:00';
+ const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), se = s%60;
+ return `${h}:${String(m).padStart(2,'0')}:${String(se).padStart(2,'0')}`;
+ }
+
+ function dur(ms) {
+ const t = Math.floor(ms/1000), h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60;
+ if (h) return `${h}ч ${m}м ${s}с`;
+ if (m) return `${m}м ${s}с`;
+ return `${s}с`;
+ }
+
+ function sName(d) {
+ const h = d.getHours();
+ return h< 11 ? 'Сон №1' : h< 15 ? 'Сон №2' : 'Сон №3';
+ }
+
+ function tick() {
+ document.getElementById('clock').textContent = now().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ refresh();
+ }
+
+ function refresh() {
+ const n = now();
+ const cSt = document.getElementById('creonStat'), cBtn = document.getElementById('creonBtn'), cNt = document.getElementById('creonNote');
+ const eSt = document.getElementById('enterStat'), eBtn = document.getElementById('enterBtn'), eNt = document.getElementById('enterNote');
+
+ function medSt(cnt, otherTyp, otherNm) {
+ if (cnt >= 3) return { txt: `✓ ${cnt}/3`, ok: false, nt: '' };
+ let cool = 0;
+ if (lastMed && lastTyp === otherTyp && td(lastMed) === td(n)) {
+ cool = COOL - Math.floor((n - lastMed) / 1000);
+ }
+ if (cool >0) return { txt: `${cnt}/3`, ok: false, nt: ` ${otherNm} через ${fm(cool)}` };
+ return { txt: `${cnt}/3`, ok: true, nt: '✓ Можно давать' };
+ }
+
+ const cr = medSt(crN, 'enter', 'Энтеросгель');
+ cSt.textContent = cr.txt; cSt.className = 'v' + (cr.ok ? ' ready' : cr.nt ? ' wait' : '');
+ cBtn.disabled = !cr.ok; cNt.textContent = cr.nt;
+
+ const er = medSt(enN, 'creon', 'Креон');
+ eSt.textContent = er.txt; eSt.className = 'v' + (er.ok ? ' ready' : er.nt ? ' wait' : '');
+ eBtn.disabled = !er.ok; eNt.textContent = er.nt;
+
+ const bms = document.getElementById('bathMStatus'), bmb = document.getElementById('bathMBtn');
+ if (bathM && td(bathM) === td(n)) { bms.textContent = '✓ Сделано'; bms.className = 'v ready'; bmb.disabled = true; bmb.textContent = '✓ Готово'; }
+ else { bms.textContent = 'Ожидание'; bms.className = 'v'; bmb.disabled = false; bmb.textContent = ' Купание завершено'; }
+
+ const bes = document.getElementById('bathEStatus'), beb = document.getElementById('bathEBtn');
+ if (bathE && td(bathE) === td(n)) { bes.textContent = '✓ Сделано'; bes.className = 'v ready'; beb.disabled = true; beb.textContent = '✓ Готово'; }
+ else { bes.textContent = 'Ожидание'; bes.className = 'v'; beb.disabled = false; beb.textContent = ' Купание завершено'; }
+
+ updateSleep();
+ }
+
+ function tapSleep() {
+ const t = now(), ts = td(t);
+ const i = naps.findIndex(s =>s.date === ts && !s.end);
+ if (i !== -1) return; // already sleeping - use pause/wake buttons
+ naps.unshift({start: t, end: null, date: ts, ds: t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}), pauses: []});
+ saveNaps(); tick(); renderHist();
+}
+
+function pauseSleep() {
+ const t = now(), ts = td(t);
+ const i = naps.findIndex(s =>s.date === ts && !s.end);
+ if (i === -1) return;
+ const s = naps[i];
+ if (!s.pauses) s.pauses = [];
+ const pi = s.pauses.findIndex(p => !p.end);
+ if (pi !== -1) {
+  s.pauses[pi].end = t; // resume
+ } else {
+  s.pauses.push({start: t, end: null}); // pause
+ }
+  saveNaps(); tick(); renderHist();
+ }
+
+ function resumeSleep() {
+  const t = now(), ts = td(t);
+  const i = naps.findIndex(s =>s.date === ts && !s.end);
+  if (i === -1) return;
+  const s = naps[i];
+  if (!s.pauses) s.pauses = [];
+  const pi = s.pauses.findIndex(p => !p.end);
+  if (pi !== -1) s.pauses[pi].end = t;
+  saveNaps(); tick(); renderHist();
+ }
+
+ function wakeUp() {
+ const t = now(), ts = td(t);
+ const i = naps.findIndex(s =>s.date === ts && !s.end);
+ if (i === -1) return;
+ const s = naps[i];
+ s.end = t;
+ if (s.pauses) { const pi = s.pauses.findIndex(p => !p.end); if (pi !== -1) s.pauses[pi].end = t; }
+ const eff = effDur(s);
+ addHist(sName(s.start), 'sleep', s.start.toISOString(), t.toISOString(), dur(eff), s.ds, t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}));
+ saveNaps(); tick(); renderHist();
+}
+
+function effDur(s) {
+ const total = (s.end || now()) - s.start;
+ let paused = 0;
+ if (s.pauses) s.pauses.forEach(p => { if (p.end) paused += p.end - p.start; else paused += now() - p.start; });
+ return total - paused;
+}
+
+function saveNaps() {
+ localStorage.setItem('naps', JSON.stringify(naps.map(s =>({
+  ...s, start: s.start.toISOString(), end: s.end ? s.end.toISOString() : null,
+  pauses: s.pauses ? s.pauses.map(p =>({start: p.start.toISOString(), end: p.end ? p.end.toISOString() : null})) : []
+ }))));
+}
+
+function refreshStats() {
+ const ts = td(curDate);
+ const dayEl = document.getElementById('sleepLast');
+ const totEl = document.getElementById('sleepTot');
+ const label = document.getElementById('sleepLabel');
+ const all = naps.filter(s =>s.date === ts);
+ const done = all.filter(s =>s.end);
+ const act = all.find(s =>!s.end);
+
+ // Left: current or last sleep
+ const lastS = done.length ? done[done.length - 1] : null;
+ if (act) {
+  const e = effDur(act);
+  label.textContent = 'Текущий сон';
+  dayEl.textContent = `${Math.floor(e / 3600000)}ч ${Math.floor((e % 3600000) / 60000)}м ${Math.floor((e % 60000) / 1000)}с`;
+ } else if (lastS) {
+  const e = effDur(lastS);
+  label.textContent = 'Последний сон';
+  dayEl.textContent = `${Math.floor(e / 3600000)}ч ${Math.floor((e % 3600000) / 60000)}м ${Math.floor((e % 60000) / 1000)}с`;
+ } else {
+  label.textContent = 'Последний сон';
+  dayEl.textContent = '—';
+ }
+
+ // Right: total for the day
+ let allMs = 0;
+ all.forEach(s => { if (s.end) allMs += effDur(s); });
+ if (act) allMs += effDur(act);
+ const ah = Math.floor(allMs / 3600000), am = Math.floor((allMs % 3600000) / 60000), as = Math.floor((allMs % 60000) / 1000);
+ if (totEl) totEl.textContent = allMs > 0 ? `${ah}ч ${am}м ${as}с` : '—';
+}
+
+ function updateSleep() {
+ const n = now(), ts = td(n);
+ const act = naps.find(s =>s.date === ts && !s.end);
+ const btn = document.getElementById('sleepBtn');
+ const row2 = document.getElementById('sleepRow2');
+ const pauseBtn = document.getElementById('pauseBtn');
+const resumeBtn = document.getElementById('resumeBtn');
+
+ refreshStats();
+
+ if (act) {
+  btn.style.display = 'none';
+  row2.style.display = 'flex';
+  const paused = act.pauses && act.pauses.findIndex(p =>!p.end) !== -1;
+  pauseBtn.style.display = paused ? 'none' : '';
+  resumeBtn.style.display = paused ? '' : 'none';
+ } else {
+  btn.style.display = '';
+  btn.className = 'sleep-btn prim';
+  row2.style.display = 'none';
+ }
+ drawChart();
+}
+
+        function editNap(idx) {
+            const s = naps[idx];
+            if (!s || s.end) return;
+            const val = prompt('Изменить время начала (ЧЧ:ММ:СС):', s.ds || '');
+            if (val) {
+                const parts = val.split(':').map(Number);
+                if (!isNaN(parts[0]) && !isNaN(parts[1])) {
+                    const d = new Date(s.start);
+                    d.setHours(parts[0], parts[1], parts[2] || 0, 0);
+                    s.start = d;
+                    s.ds = val;
+                    saveNaps();
+                    drawChart();
+                }
+            }
+        }
+
+        function drawChart() {
+            const svg = document.querySelector('#sleepVisor svg');
+            if (!svg) return;
+            const n = new Date();
+            const dateStr = td(curDate);
+            const sessions = naps.filter(s => s.date === dateStr);
+            const act = naps.find(s => s.date === dateStr && !s.end);
+
+            const cx = 140, cy = 140, r = 100;
+            const halfW = 16 * 60;
+
+            function frac(h, m) { return Math.max(0, Math.min(1, ((h - 6) * 60 + m) / halfW)); }
+            function pos(t) { const a = t * Math.PI; return {x: cx + r * Math.cos(a), y: cy + r * Math.sin(a)}; }
+
+            let htm = '';
+
+            // Track (stroke-only semicircle)
+            const left = pos(1), right = pos(0);
+            htm += `<path d="M${left.x} ${left.y} A${r} ${r} 0 0 1 ${right.x} ${right.y}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6" stroke-linecap="round"/>`;
+
+            // Sun at left end, Moon at right end
+            htm += `<text x="${left.x - 20}" y="${left.y}" text-anchor="middle" dominant-baseline="central" font-size="16">☀️</text>`;
+            htm += `<text x="${right.x + 20}" y="${right.y}" text-anchor="middle" dominant-baseline="central" font-size="16">🌙</text>`;
+
+            // Sleep arcs along the track
+            for (const s of sessions) {
+                const bs = new Date(s.start);
+                const be = s.end ? new Date(s.end) : (td(curDate) === td(n) ? n : new Date(curDate));
+                const sf = frac(bs.getHours(), bs.getMinutes());
+                const ef = frac(be.getHours(), be.getMinutes());
+                if (ef <= sf) continue;
+                const p1 = pos(sf), p2 = pos(ef);
+                const large = (ef - sf) > 0.5 ? 1 : 0;
+                const cls = s.end ? 'done' : 'now';
+                htm += `<path d="M${p1.x} ${p1.y} A${r} ${r} 0 ${large} 1 ${p2.x} ${p2.y}" fill="none" class="arc ${cls}" stroke-width="6" stroke-linecap="round"/>`;
+            }
+
+            // Center text below
+            let totMs = 0;
+            sessions.forEach(s => totMs += effDur(s));
+            const bh = Math.floor(totMs / 3600000), bm = Math.floor((totMs % 3600000) / 60000), bsec = Math.floor((totMs % 60000) / 1000);
+            const big = totMs > 0 ? `${bh}ч ${bm}м ${bsec}с` : '—';
+
+            let awake = '—';
+            if (act) {
+                const e = effDur(act);
+                awake = `${Math.floor(e / 3600000)}ч ${Math.floor((e % 3600000) / 60000)}м ${Math.floor((e % 60000) / 1000)}с`;
+            } else {
+                const last = sessions.filter(s => s.end).pop();
+                if (last) { const a = n - last.end; awake = `${Math.floor(a / 3600000)}ч ${Math.floor((a % 3600000) / 60000)}м ${Math.floor((a % 60000) / 1000)}с`; }
+            }
+
+            const status = act ? (act.pauses?.find(p => !p.end) ? 'пауза' : 'сплю') : 'сон за день';
+            const txtY = cy + 10;
+            htm += `<text x="${cx}" y="${txtY - 16}" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">${big}</text>`;
+            htm += `<text x="${cx}" y="${txtY + 4}" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.3)">${status}</text>`;
+            htm += `<text x="${cx}" y="${txtY + 22}" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.2)">бодрствует ${awake}</text>`;
+
+            svg.innerHTML = htm;
+        }
+
+        function addHist(med, typ, st, et, dt, sd, ed) {
+ const n = now();
+ const e = {med, typ, time: n.toISOString(), display: n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}), date: td(n)};
+ if (typ === 'sleep') { e.st = st; e.et = et; e.dt = dt; e.sd = sd; e.ed = ed; }
+ hist.unshift(e);
+ localStorage.setItem('hist', JSON.stringify(hist));
+ }
+
+ function giveCreon() {
+ if (crN >= 3) return;
+ crN++; lastMed = now(); lastTyp = 'creon'; saveMeds();
+ addHist('Креон 10000', 'creon'); tick(); renderHist();
+ }
+
+ function giveEnter() {
+ if (enN >= 3) return;
+ enN++; lastMed = now(); lastTyp = 'enterosgel'; saveMeds();
+ addHist('Энтеросгель', 'enterosgel'); tick(); renderHist();
+ }
+
+ function markBath(m) {
+ const n = now();
+ if (m) { bathM = n; localStorage.setItem('bathM', n.toISOString()); addHist('Утреннее купание', 'bath'); }
+ else { bathE = n; localStorage.setItem('bathE', n.toISOString()); addHist('Вечернее купание', 'bath'); }
+ tick(); renderHist();
+ }
+
+        function renderHist() {
+            const el = document.getElementById('histList');
+            if (!el) return;
+            const tp = {'creon':'cr','enterosgel':'en','bath':'ba','sleep':'sl'};
+
+            if (showAll) {
+                if (!hist.length && !naps.length) { el.innerHTML = '<div class="empty">Нет записей</div>'; return; }
+                const grp = {};
+                naps.forEach(s => { if (!grp[s.date]) grp[s.date] = []; grp[s.date].push({type:'nap', data:s}); });
+                hist.forEach((i, idx) => { if (!grp[i.date]) grp[i.date] = []; if (i.typ !== 'sleep') grp[i.date].push({type:'hist', data:i, idx}); });
+                const dates = Object.keys(grp).sort((a,b) => new Date(b)-new Date(a));
+                const fmtD = d => { const t = new Date().toDateString(); if (d===t) return 'Сегодня'; if (d===new Date(Date.now()-864e5).toDateString()) return 'Вчера'; return new Date(d).toLocaleDateString('ru-RU', {day:'numeric',month:'long'}); };
+                el.innerHTML = dates.map(d => `
+                    <div class="hist-date">${fmtD(d)}</div>
+                    ${grp[d].map(item => {
+                        if (item.type === 'nap') {
+                            const s = item.data;
+                            const st = s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                            if (s.end) {
+                                const et = s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                                return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(effDur(s))}</span></div><span class="time">${st}–${et}</span></div></div>`;
+                            }
+                            return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span></div></div>`;
+                        }
+                        const i = item.data;
+                        const c = tp[i.typ] || 'ba';
+                        const r = i.typ === 'sleep' && i.sd;
+                        return `<div class="hist-row ${c}"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${i.med}</span>${r ? `<span class="dur">${i.dt}</span>` : ''}</div><span class="time">${r ? `${i.sd}–${i.ed}` : i.display}</span><button class="act" onclick="openModal(${item.idx})" title="Изменить">✎</button><button class="act del" onclick="delHist(${item.idx})" title="Удалить">×</button></div></div>`;
+                    }).join('')}
+                `).join('');
+                return;
+            }
+
+            const sd = td(curDate);
+            const rows = [];
+
+            naps.forEach(s => {
+                if (s.date !== sd) return;
+                const st = s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+                if (s.end) {
+                    const et = s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(s.end - s.start)}</span></div><span class="time">${st}–${et}</span></div></div>`});
+                } else {
+                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span></div></div>`});
+                }
+            });
+
+            hist.forEach((i, idx) => {
+                if (i.date !== sd || i.typ === 'sleep') return;
+                const c = tp[i.typ] || 'ba';
+                const r = i.typ === 'sleep' && i.sd;
+                rows.push({typ: i.typ, time: new Date(i.time), html: `<div class="hist-row ${c}"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${i.med}</span>${r ? `<span class="dur">${i.dt}</span>` : ''}</div><span class="time">${r ? `${i.sd}–${i.ed}` : i.display}</span><button class="act" onclick="openModal(${idx})" title="Изменить">✎</button><button class="act del" onclick="delHist(${idx})" title="Удалить">×</button></div></div>`});
+            });
+
+            if (!rows.length) { el.innerHTML = '<div class="empty">Нет записей за этот день</div>'; return; }
+            rows.sort((a, b) => a.time - b.time);
+            el.innerHTML = rows.map(r => r.html).join('');
+        }
+
+        function toggleAll() {
+            showAll = !showAll;
+            document.getElementById('allBtn').textContent = showAll ? 'По дням' : 'Вся история';
+            renderHist();
+        }
+
+        function exportData() {
+            let text = 'Дневник Леона\n';
+            text += '='.repeat(40) + '\n\n';
+
+            const allNaps = naps.map(s => ({...s, start: new Date(s.start), end: s.end ? new Date(s.end) : null}));
+            const dates = new Set();
+            naps.forEach(s => dates.add(s.date));
+            hist.forEach(i => dates.add(i.date));
+            const sorted = [...dates].sort();
+
+            for (const d of sorted) {
+                const dt = new Date(d + 'T00:00:00');
+                text += dt.toLocaleDateString('ru-RU', {day:'numeric',month:'long',year:'numeric'}) + '\n';
+                text += '-'.repeat(30) + '\n';
+
+                const dayNaps = allNaps.filter(s => s.date === d).sort((a,b) => a.start - b.start);
+                for (const s of dayNaps) {
+                    const st = s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                    if (s.end) {
+                        const et = s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                        const d2 = Math.floor((s.end - s.start) / 1000);
+                        const h = Math.floor(d2 / 3600), m = Math.floor((d2 % 3600) / 60);
+                        text += `  Сон: ${st}–${et} (${h ? h + 'ч ' : ''}${m}м)\n`;
+                    } else {
+                        text += `  Сон: ${st}–… (не закончен)\n`;
+                    }
+                }
+
+                const dayHist = hist.filter(i => i.date === d).sort((a,b) => new Date(a.time) - new Date(b.time));
+                for (const i of dayHist) {
+                    const t = new Date(i.time).toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                    if (i.typ === 'sleep' && i.sd) {
+                        text += `  ${i.med}: ${i.sd}–${i.ed} (${i.dt})\n`;
+                    } else {
+                        text += `  ${i.med}: ${t}\n`;
+                    }
+                }
+                text += '\n';
+            }
+
+            const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Леон-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function delHist(idx) {
+ const i = hist[idx]; if (!i) return;
+ if (!confirm(`Удалить «${i.med}»?`)) return;
+ hist.splice(idx, 1); localStorage.setItem('hist', JSON.stringify(hist));
+ renderHist();
+ }
+
+ function openModal(idx) {
+ editIdx = idx; const i = hist[idx]; if (!i) return;
+ const b = document.getElementById('modalBody');
+ const ic = {'creon':'','enterosgel':'','bath':'','sleep':''};
+ const r = i.typ === 'sleep' && i.sd;
+ let h = `<div class="tag">${ic[i.typ]||''} ${i.med}</div>`;
+ if (r) {
+ h += `<div class="field"><label class="label">Начало</label><input type="time" step="1" id="mSt" value="${i.sd}"></div>`;
+ h += `<div class="field"><label class="label">Конец</label><input type="time" step="1" id="mEt" value="${i.ed}"></div>`;
+ h += `<div style="font-size:13px;color:var(--muted);">Продолжительность:<strong style="color:var(--purple);">${i.dt}</strong></div>`;
+ } else {
+ h += `<div class="field"><label class="label">Время</label><input type="time" step="1" id="mTm" value="${i.display}"></div>`;
+ }
+ b.innerHTML = h;
+ document.getElementById('modal').style.display = 'flex';
+ }
+
+ function saveModal() {
+ const i = hist[editIdx]; if (!i) return;
+ const r = i.typ === 'sleep' && document.getElementById('mSt');
+ if (r) {
+ const sv = document.getElementById('mSt').value, ev = document.getElementById('mEt').value;
+ if (sv && ev) {
+ const n = new Date(i.et || i.time);
+ const [sh,sm,ss] = sv.split(':').map(Number);
+ const [eh,em,es] = ev.split(':').map(Number);
+ const sd = new Date(n); sd.setHours(sh,sm,ss||0,0);
+ const ed = new Date(n); ed.setHours(eh,em,es||0,0);
+ i.st = sd.toISOString(); i.et = ed.toISOString();
+ i.sd = sv; i.ed = ev; i.dt = dur(ed-sd);
+ i.time = ed.toISOString(); i.display = ev;
+ }
+ } else {
+ const v = document.getElementById('mTm')?.value;
+ if (v) {
+ const [h,m,s] = v.split(':').map(Number);
+ const d = new Date(i.time); d.setHours(h,m,s||0,0);
+ i.time = d.toISOString(); i.display = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ }
+ }
+ localStorage.setItem('hist', JSON.stringify(hist));
+ closeModal(); renderHist();
+ }
+
+ function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; }
+
+        function goDate(d) {
+            curDate = new Date(d);
+            curDate.setHours(0,0,0,0);
+            const t = new Date(); t.setHours(0,0,0,0);
+            if (curDate > t) curDate = new Date(t);
+            renderDateStrip();
+            renderHist(); drawChart(); refreshStats();
+        }
+
+        function renderDateStrip() {
+            const strip = document.getElementById('dateStrip');
+            if (!strip) return;
+            const t = new Date(); t.setHours(0,0,0,0);
+            const todayMs = t.getTime();
+            const selMs = curDate.getTime();
+            const days = ['вс','пн','вт','ср','чт','пт','сб'];
+            let html = '';
+            const start = new Date(selMs - 5 * 864e5);
+            for (let i = 0; i < 11; i++) {
+                const d = new Date(start.getTime() + i * 864e5);
+                d.setHours(0,0,0,0);
+                if (d > t) break;
+                const ms = d.getTime();
+                const sel = ms === selMs;
+                const isToday = ms === todayMs;
+                const dayNum = d.getDate();
+                const dayName = days[d.getDay()];
+                const month = d.toLocaleDateString('ru-RU', {month:'short'}).replace('.','');
+                html += `<button class="d${sel?' sel':''}${isToday?' today':''}" onclick="goDate('${d.toDateString()}')">
+                    <span class="dw">${sel ? '' : dayName}</span>
+                    <span class="dn">${sel ? month+' ' : ''}${dayNum}</span>
+                </button>`;
+            }
+            strip.innerHTML = html;
+        }
+
+        function renderSecNav() {
+            const nav = document.getElementById('secNav');
+            if (!nav) return;
+            const sections = [
+                {id:'sleepCard', label:'Сон'},
+                {id:'sec-bathm', label:'Утро'},
+                {id:'sec-creon', label:'Креон'},
+                {id:'sec-enter', label:'Энтеросгель'},
+                {id:'sec-bathe', label:'Вечер'},
+                {id:'sec-scheme', label:'Схема'},
+                {id:'sec-hist', label:'История'}
+            ];
+            nav.innerHTML = sections.map(s =>
+                `<button onclick="document.getElementById('${s.id}').scrollIntoView({behavior:'smooth',block:'start'})" data-target="${s.id}">${s.label}</button>`
+            ).join('');
+        }
+
+        function resetDay() {
+ if (!confirm('Сбросить все данные за сегодня?')) return;
+ const t = new Date().toDateString();
+ hist = hist.filter(i =>i.date !== t); localStorage.setItem('hist', JSON.stringify(hist));
+ naps = naps.filter(s =>s.date !== t); saveNaps();
+ crN = 0; enN = 0; lastMed = null; lastTyp = null; saveMeds();
+ localStorage.removeItem('bathM'); localStorage.removeItem('bathE');
+ bathM = null; bathE = null;
+ tick(); renderHist();
+ }
+
+        function init() {
+            renderSecNav();
+            tick(); renderHist(); renderDateStrip(); 
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    const btn = document.querySelector(`.sec-nav button[data-target="${e.target.id}"]`);
+                    if (btn) btn.classList.toggle('active', e.isIntersecting);
+                });
+            }, {rootMargin: '-80px 0px -60% 0px'});
+            document.querySelectorAll('#sleepCard,#sec-bathm,#sec-creon,#sec-enter,#sec-bathe,#sec-scheme,#sec-hist').forEach(el => observer.observe(el));
+
+            setInterval(tick, 1000);
+        }
+        init();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    </script>
+</body>
+</html>
