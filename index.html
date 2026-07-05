@@ -703,9 +703,10 @@ function dur(ms) {
  return `${s}с`;
  }
 
- function sName(d) {
- const h = d.getHours();
- return h< 11 ? 'Сон №1' : h< 15 ? 'Сон №2' : 'Сон №3';
+ function sName(startDate) {
+  const ts = td(startDate);
+  const before = naps.filter(s => s.date === ts && s.start < startDate);
+  return 'Сон №' + (before.length + 1);
  }
 
  function tick() {
