@@ -384,8 +384,9 @@
 
  .hist-row.cr .bar { background: var(--orange); }
  .hist-row.en .bar { background: var(--tint); }
- .hist-row.ba .bar { background: #26A69A; }
- .hist-row.sl .bar { background: var(--purple); }
+  .hist-row.ba .bar { background: #26A69A; }
+  .hist-row.sl .bar { background: var(--purple); }
+  .hist-row.ev .bar { background: #3B82F6; }
 
  .hist-row + .hist-row {
  border-top: 1px solid var(--sep);
@@ -678,6 +679,7 @@
 <div id="histList"></div>
 <div class="hist-footer">
 <button class="hbtn danger" onclick="resetDay()">✕ Сбросить сегодня</button>
+<button class="hbtn" onclick="openAddModal()">➕ Событие</button>
 <button class="hbtn prim" onclick="exportData()">📄 Экспорт .txt</button>
 </div>
 </div>
@@ -715,6 +717,7 @@
   let curDate = new Date(); curDate.setHours(0,0,0,0);
   let editIdx = -1;
   let showAll = false;
+  let addMode = false;
 
  let crN = 0, enN = 0, lastMed = null, lastTyp = null;
  const COOL = 3600;
@@ -1262,7 +1265,7 @@ function refreshStats() {
         function renderHist() {
             const el = document.getElementById('histList');
             if (!el) return;
-            const tp = {'creon':'cr','enterosgel':'en','bath':'ba','sleep':'sl','night':'sl'};
+            const tp = {'creon':'cr','enterosgel':'en','bath':'ba','sleep':'sl','night':'sl','event':'ev'};
 
             if (showAll) {
                 if (!hist.length && !naps.length) { el.innerHTML = '<div class="empty">Нет записей</div>'; return; }
@@ -1392,25 +1395,80 @@ function refreshStats() {
   renderHist(); drawChart();
  }
 
+ function openAddModal() {
+  addMode = true;
+  editIdx = -1;
+  const b = document.getElementById('modalBody');
+  const n = now();
+  b.innerHTML = `
+    <div class="tag">✏️ Добавить событие</div>
+    <div class="field"><label>Название</label><input type="text" id="mEventName" placeholder="например, Погуляли"></div>
+    <div class="field"><label>Время</label><input type="time" step="1" id="mTm" value="${n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'})}"></div>
+  `;
+  document.getElementById('modal').style.display = 'flex';
+ }
+
  function openModal(idx) {
  editIdx = idx; const i = hist[idx]; if (!i) return;
  const b = document.getElementById('modalBody');
- const ic = {'creon':'','enterosgel':'','bath':'','sleep':''};
- const r = (i.typ === 'sleep' || i.typ === 'night') && i.sd;
- let h = `<div class="tag">${ic[i.typ]||''} ${i.med}</div>`;
- if (r) {
- h += `<div class="field"><label class="label">Начало</label><input type="time" step="1" id="mSt" value="${i.sd}"></div>`;
- h += `<div class="field"><label class="label">Конец</label><input type="time" step="1" id="mEt" value="${i.ed}"></div>`;
- h += `<div style="font-size:13px;color:var(--muted);">Продолжительность:<strong style="color:var(--purple);">${i.dt}</strong></div>`;
+ let h = '';
+ if (i.typ === 'event') {
+  h += `<div class="tag">✏️ ${i.med}</div>`;
+  h += `<div class="field"><label>Название</label><input type="text" id="mEventName" value="${i.med}"></div>`;
+  h += `<div class="field"><label>Время</label><input type="time" step="1" id="mTm" value="${i.display}"></div>`;
  } else {
- h += `<div class="field"><label class="label">Время</label><input type="time" step="1" id="mTm" value="${i.display}"></div>`;
+  const ic = {'creon':'','enterosgel':'','bath':'','sleep':''};
+  const r = (i.typ === 'sleep' || i.typ === 'night') && i.sd;
+  h = `<div class="tag">${ic[i.typ]||''} ${i.med}</div>`;
+  if (r) {
+  h += `<div class="field"><label class="label">Начало</label><input type="time" step="1" id="mSt" value="${i.sd}"></div>`;
+  h += `<div class="field"><label class="label">Конец</label><input type="time" step="1" id="mEt" value="${i.ed}"></div>`;
+  h += `<div style="font-size:13px;color:var(--muted);">Продолжительность:<strong style="color:var(--purple);">${i.dt}</strong></div>`;
+  } else {
+  h += `<div class="field"><label class="label">Время</label><input type="time" step="1" id="mTm" value="${i.display}"></div>`;
+  }
  }
  b.innerHTML = h;
  document.getElementById('modal').style.display = 'flex';
  }
 
  function saveModal() {
+ if (addMode) {
+  addMode = false;
+  const name = document.getElementById('mEventName')?.value.trim();
+  if (!name) { alert('Введите название события'); return; }
+  const v = document.getElementById('mTm')?.value;
+  const n = now();
+  let timeISO, timeStr;
+  if (v) {
+   const [h,m,s] = v.split(':').map(Number);
+   const d = new Date(n); d.setHours(h,m,s||0,0);
+   timeISO = d.toISOString();
+   timeStr = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  } else {
+   timeISO = n.toISOString();
+   timeStr = n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  hist.unshift({med: name, typ: 'event', time: timeISO, display: timeStr, date: td(new Date(timeISO))});
+  localStorage.setItem('hist', JSON.stringify(hist));
+  closeModal(); renderHist();
+  return;
+ }
  const i = hist[editIdx]; if (!i) return;
+ if (i.typ === 'event') {
+  const name = document.getElementById('mEventName')?.value.trim();
+  if (!name) { alert('Введите название события'); return; }
+  i.med = name;
+  const v = document.getElementById('mTm')?.value;
+  if (v) {
+   const [h,m,s] = v.split(':').map(Number);
+   const d = new Date(i.time); d.setHours(h,m,s||0,0);
+   i.time = d.toISOString(); i.display = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  localStorage.setItem('hist', JSON.stringify(hist));
+  closeModal(); renderHist();
+  return;
+ }
  const r = (i.typ === 'sleep' || i.typ === 'night') && document.getElementById('mSt');
  if (r) {
  const sv = document.getElementById('mSt').value, ev = document.getElementById('mEt').value;
@@ -1437,7 +1495,7 @@ function refreshStats() {
   closeModal(); renderHist(); drawChart();
  }
 
- function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; }
+ function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; addMode = false; }
 
         function goDate(d) {
             curDate = new Date(d);
