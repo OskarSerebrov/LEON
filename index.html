@@ -530,6 +530,14 @@
  .modal-foot .save { background: var(--tint); color: #fff; }
  .modal-foot .cancel { background: rgba(255,255,255,.08); color: #fff; }
 
+.cst-btn {
+  flex: 1 1 40%; padding: 12px 8px; border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+  background: rgba(255,255,255,.08); color: #fff; transition: all .15s;
+  text-align: center; min-width: 0;
+}
+.cst-btn:active { transform: scale(.96); opacity: .7; }
+
  @media (max-width: 480px) {
  .header h1 { font-size: 28px; }
  .row .v { font-size: 15px; }
@@ -1405,10 +1413,45 @@ function refreshStats() {
   const n = now();
   b.innerHTML = `
     <div class="tag">✏️ Добавить событие</div>
-    <div class="field"><label>Название</label><input type="text" id="mEventName" placeholder="например, Погуляли"></div>
     <div class="field"><label>Время</label><input type="time" step="1" id="mTm" value="${n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'})}"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+      <button class="cst-btn" onclick="addCustomEvt('creon','💊')">Креон 10000</button>
+      <button class="cst-btn" onclick="addCustomEvt('enter','💊')">Энтеросгель</button>
+      <button class="cst-btn" onclick="addCustomEvt('bathM','🛁')">Купание утром</button>
+      <button class="cst-btn" onclick="addCustomEvt('bathE','🛁')">Купание вечером</button>
+      <button class="cst-btn" onclick="addCustomEvt('sleep','😴')">Сон</button>
+      <button class="cst-btn" onclick="addCustomEvt('wake','☀️')">Проснулись</button>
+    </div>
   `;
   document.getElementById('modal').style.display = 'flex';
+  document.querySelector('.modal-foot .save').style.display = 'none';
+ }
+
+ function addCustomEvt(typ, icon) {
+  const v = document.getElementById('mTm')?.value;
+  closeModal();
+  switch (typ) {
+   case 'creon': giveCreon(); break;
+   case 'enter': giveEnter(); break;
+   case 'bathM': markBath(1); break;
+   case 'bathE': markBath(0); break;
+   case 'sleep':
+    addHist('😴 Сон', 'event');
+    break;
+   case 'wake':
+    addHist('☀️ Проснулись', 'event');
+    break;
+  }
+  if (v && hist.length) {
+   const [h,m,s] = v.split(':').map(Number);
+   const d = new Date(); d.setHours(h,m,s||0,0);
+   hist[0].time = d.toISOString();
+   hist[0].display = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+   if (hist[0].st) hist[0].st = d.toISOString();
+   if (hist[0].et) hist[0].et = d.toISOString();
+   localStorage.setItem('hist', JSON.stringify(hist));
+  }
+  tick(); renderHist();
  }
 
  function openModal(idx) {
@@ -1433,27 +1476,12 @@ function refreshStats() {
  }
  b.innerHTML = h;
  document.getElementById('modal').style.display = 'flex';
+ document.querySelector('.modal-foot .save').style.display = '';
  }
 
  function saveModal() {
  if (addMode) {
   addMode = false;
-  const name = document.getElementById('mEventName')?.value.trim();
-  if (!name) { alert('Введите название события'); return; }
-  const v = document.getElementById('mTm')?.value;
-  const n = now();
-  let timeISO, timeStr;
-  if (v) {
-   const [h,m,s] = v.split(':').map(Number);
-   const d = new Date(n); d.setHours(h,m,s||0,0);
-   timeISO = d.toISOString();
-   timeStr = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  } else {
-   timeISO = n.toISOString();
-   timeStr = n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }
-  hist.unshift({med: name, typ: 'event', time: timeISO, display: timeStr, date: td(new Date(timeISO))});
-  localStorage.setItem('hist', JSON.stringify(hist));
   closeModal(); renderHist();
   return;
  }
@@ -1498,7 +1526,7 @@ function refreshStats() {
   closeModal(); renderHist(); drawChart();
  }
 
- function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; addMode = false; }
+ function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; addMode = false; document.querySelector('.modal-foot .save').style.display = ''; }
 
         function goDate(d) {
             curDate = new Date(d);
