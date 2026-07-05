@@ -9,6 +9,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="apple-touch-icon" sizes="192x192" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>Леон · дневник</title>
 <style>
  :root {
@@ -35,7 +38,7 @@
  }
 
   body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
   background: var(--bg);
   background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,.12) 0%, transparent 100%);
   min-height: 100vh;
@@ -102,7 +105,7 @@
  }
 
  .card-icon.creon { background: rgba(245,158,11,.15); }
- .card-icon.enter { background: rgba(59,130,246,.15); }
+ .card-icon.enter { background: rgba(52,199,89,.15); }
  .card-icon.bath { background: rgba(56,189,248,.15); }
  
 
@@ -132,14 +135,15 @@
  }
 
  .row .v.ready { color: var(--green); }
- .row .v.wait { color: var(--orange); }
+ .row .v.wait { color: #FBBF24; }
+ #creonStat { color: #FBBF24 !important; font-weight: 700; }
 
  .btn {
  width: 100%; padding: 14px;
  border: none; border-radius: var(--rs);
  font-size: 16px; font-weight: 600;
  cursor: pointer;
- font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
  transition: opacity .2s;
  }
 
@@ -147,27 +151,40 @@
  .btn:disabled { opacity: .3; cursor: default; }
 
  .btn-creon { background: linear-gradient(135deg, #D97706, #F59E0B); color: #fff; }
- .btn-enter { background: linear-gradient(135deg, #2563EB, #3B82F6); color: #fff; }
+ .btn-enter { background: linear-gradient(135deg, #059669, #10B981); color: #fff; }
+ .dose-row { display: flex; gap: 6px; margin-top: 8px; }
+ .dose-row .dose-btn { flex: 1; padding: 10px; border: none; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s; text-align: center; }
+ .dose-row .dose-btn:active { transform: scale(.96); }
+ .dose-row .dose-btn:disabled { opacity: .3; cursor: default; transform: none; }
+ .dose-row .dose-btn.creon { background: rgba(245,158,11,.15); color: #FBBF24; border: 1px solid rgba(245,158,11,.2); }
+ .dose-row .dose-btn.creon.done { background: rgba(52,199,89,.15); color: #34C759; border-color: rgba(52,199,89,.2); }
+ .dose-row .dose-btn.enter { background: rgba(16,185,129,.15); color: #6EE7B7; border: 1px solid rgba(16,185,129,.2); }
+ .dose-row .dose-btn.enter.done { background: rgba(52,199,89,.15); color: #34C759; border-color: rgba(52,199,89,.2); }
  .btn-bath { background: rgba(56,189,248,.15); color: #7DD3FC; border: 1px solid rgba(56,189,248,.2); }
 
  .sleep-card {
   background: linear-gradient(145deg, #1E1135, #0F1A3A) !important;
   border-color: rgba(255,255,255,.08) !important;
   border-radius: 28px !important;
-  padding: 20px !important;
+  padding: 16px 12px !important;
  }
 
- .sleep-visor { width: 100%; max-width: 320px; margin: 0 auto; }
- .sleep-visor svg { display: block; width: 100%; height: 100%; }
- .sleep-visor .arc.done { stroke: #7C3AED; opacity: .7; }
- .sleep-visor .arc.now { stroke: #A78BFA; opacity: 1; filter: drop-shadow(0 0 10px rgba(167,139,250,.4)); }
- .sleep-visor .oval { cursor: pointer; transition: opacity .2s; }
- .sleep-visor .oval:hover { opacity: .85; }
+.sleep-topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+.sleep-topbar .stb-left, .sleep-topbar .stb-right { flex: 0 0 auto; }
+.sleep-topbar .stb-center { flex: 1; text-align: center; }
+.sleep-topbar .stb-num { display: block; font-size: 24px; font-weight: 800; color: #A78BFA; line-height: 1.2; }
+.sleep-topbar .stb-lbl { display: block; font-size: 11px; color: rgba(255,255,255,.3); font-weight: 600; }
+.sleep-topbar .stb-btn { background: none; border: 1px solid rgba(255,255,255,.08); border-radius: 100px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.25); cursor: pointer; font-family: inherit; transition: all .2s; white-space: nowrap; }
+.sleep-topbar .stb-btn.stb-prim { background: #7C3AED; border: none; color: #fff; }
+.sleep-topbar .stb-btn:hover { opacity: .85; }
 
- .sleep-stats-row { display: flex; gap: 8px; margin: 12px 0 4px; }
- .sleep-stats-row > div { flex: 1; background: rgba(255,255,255,.04); border-radius: 12px; padding: 8px 10px; text-align: center; }
- .sleep-stats-row .ss-l { display: block; font-size: 10px; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .5px; }
- .sleep-stats-row .ss-v { display: block; font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; }
+.sleep-visor { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0; }
+.sleep-visor svg { display: block; width: 1000px; height: 220px; }
+
+ .sleep-stats-row { display: flex; gap: 8px; margin: 10px 0 4px; }
+ .sleep-stats-row > div { flex: 1; background: rgba(255,255,255,.06); border-radius: 14px; padding: 10px 12px; text-align: center; }
+ .sleep-stats-row .ss-l { display: block; font-size: 12px; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+ .sleep-stats-row .ss-v { display: block; font-size: 17px; font-weight: 600; color: #fff; margin-top: 3px; }
 
  #sleepActions { display: flex; flex-direction: column; gap: 8px; }
  #sleepActions .row2 { display: flex; gap: 8px; }
@@ -185,6 +202,8 @@
  .sleep-btn.prim { background: linear-gradient(135deg, #7C3AED, #6D28D9); color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,.3); }
  .sleep-btn.sec { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.1); }
  .sleep-btn.sec:hover { background: rgba(255,255,255,.12); }
+
+
 
  .card-player { padding: 14px 20px; }
  .player-tracks { display: flex; gap: 8px; margin-bottom: 10px; }
@@ -334,16 +353,13 @@
             color: #fff;
         }
 
-        .hist-reset {
-            background: none;
-            border: none;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--tint);
-            cursor: pointer;
-            padding: 4px 8px;
-            font-family: inherit;
-        }
+        .hist-footer { display: flex; gap: 6px; padding: 12px 0 4px; border-top: 1px solid var(--sep); margin-top: 8px; flex-wrap: wrap; }
+        .hist-footer .hbtn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.6); cursor: pointer; padding: 10px 14px; font-family: inherit; transition: all .15s; flex: 1; min-width: 0; text-align: center; }
+        .hist-footer .hbtn:hover { background: rgba(255,255,255,.1); color: #fff; }
+        .hist-footer .hbtn.danger { color: var(--red); border-color: rgba(255,59,48,.2); }
+        .hist-footer .hbtn.danger:hover { background: rgba(255,59,48,.1); }
+        .hist-footer .hbtn.prim { background: var(--tint); border-color: var(--tint); color: #fff; }
+        .hist-footer .hbtn.prim:hover { opacity: .85; }
 
 
 
@@ -408,15 +424,13 @@
  }
 
  .hist-row .act {
- background: none; border: none;
- font-size: 14px; cursor: pointer;
- color: rgba(255,255,255,.2); padding: 4px;
- opacity: 0; transition: opacity .15s;
+ background: rgba(255,255,255,.06); border: none; border-radius: 8px;
+ font-size: 17px; cursor: pointer;
+ color: rgba(255,255,255,.5); padding: 6px 10px;
+ transition: all .15s; line-height: 1;
  }
-
- .hist-row:hover .act { opacity: 1; }
- .hist-row .act:hover { color: rgba(255,255,255,.5); }
- .hist-row .act.del:hover { color: var(--red); }
+ .hist-row .act:hover { background: rgba(255,255,255,.12); color: #fff; }
+ .hist-row .act.del:hover { background: rgba(255,255,255,.12); color: var(--red); }
 
  .empty {
  color: rgba(255,255,255,.3);
@@ -528,6 +542,7 @@
 </div>
 
 <div class="card card-player" id="sec-player">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-size:18px;">🎵</span><span style="font-size:17px;font-weight:600;color:#fff;">Аудиоплеер</span></div>
 <div class="player-tracks" id="playerTracks">
 <button class="track-btn" data-track="0">🌊 Шум</button>
 <button class="track-btn" data-track="1">⛈ Гроза</button>
@@ -552,9 +567,22 @@
 </div>
 
 <div class="card sleep-card" id="sleepCard">
-<div class="sleep-visor" id="sleepVisor">
-<svg viewBox="0 0 280 180" width="100%" height="100%"></svg>
+<div class="sleep-topbar">
+<div class="stb-left" id="stbLeft">
+<button class="stb-btn" onclick="wakeUpNight()" id="stbWakeBtn">☀️ Проснулись</button>
 </div>
+<div class="stb-center">
+<span class="stb-num" id="stbDayTot">0ч 0м</span>
+<span class="stb-lbl">Сон за день</span>
+</div>
+<div class="stb-right" id="stbRight">
+<button class="stb-btn stb-prim" onclick="startNight()" id="stbNightBtn">🌙 Спим в ночь</button>
+</div>
+</div>
+<div class="sleep-visor" id="sleepVisor">
+<svg viewBox="0 0 1000 220"></svg>
+</div>
+
 <div id="sleepActions">
 <button class="sleep-btn prim" onclick="tapSleep()" id="sleepBtn"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="white" d="M8 5v14l11-7z"/></svg> Начать сон</button>
 <div class="row3" id="sleepRow2" style="display:none;">
@@ -563,9 +591,13 @@
 <button class="sleep-btn prim" onclick="wakeUp()" id="wakeBtn">Завершить</button>
 </div>
 </div>
-<div class="sleep-stats-row">
+<div class="sleep-stats-row" id="sleepStatsRow">
 <div><span class="ss-l" id="sleepLabel">Последний сон</span><span class="ss-v" id="sleepLast">—</span></div>
+<div><span class="ss-l">🌙 Ночной сон</span><span class="ss-v" id="nightStat">—</span></div>
+</div>
+<div class="sleep-stats-row">
 <div><span class="ss-l">Всего за день</span><span class="ss-v" id="sleepTot">—</span></div>
+<div><span class="ss-l">☀️ Бодрствует</span><span class="ss-v" id="awakeStat">—</span></div>
 </div>
 </div>
 
@@ -577,8 +609,11 @@
 <p>Эмоленты после купания</p>
 </div>
 </div>
-<div class="row"><div class="l">Статус</div><div class="v" id="bathMStatus">Ожидание</div></div>
-<button class="btn btn-bath" onclick="markBath(1)" id="bathMBtn">Купание завершено</button>
+<div style="display:flex;align-items:center;gap:10px;">
+<span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.45);">Статус:</span>
+<span style="font-size:15px;font-weight:600;" id="bathMStatus">Ожидание</span>
+<button class="btn btn-bath" onclick="markBath(1)" id="bathMBtn" style="margin-left:auto;width:auto;padding:8px 16px;flex-shrink:0;">Искупались</button>
+</div>
 </div>
 
 <div class="card" id="sec-creon">
@@ -589,21 +624,29 @@
 <p>1 капсула во время еды, 3 раза</p>
 </div>
 </div>
-<div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="creonStat">0/3</div></div>
-<button class="btn btn-creon" onclick="giveCreon()" id="creonBtn">✓ Дал Креон</button>
+ <div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="creonStat">0/3</div></div>
+<div class="dose-row" id="creonDoseRow">
+<button class="dose-btn creon" onclick="giveCreon()">① Дали</button>
+<button class="dose-btn creon" onclick="giveCreon()">② Дали</button>
+<button class="dose-btn creon" onclick="giveCreon()">③ Дали</button>
+</div>
 <div class="subnote" id="creonNote"></div>
 </div>
 
 <div class="card" id="sec-enter">
 <div class="card-head">
-<div class="card-icon enter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#93C5FD"/></svg></div>
+<div class="card-icon enter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#6EE7B7"/></svg></div>
 <div class="card-title">
 <h2>Энтеросгель</h2>
 <p>7 мл + вода, 3 раза</p>
 </div>
 </div>
-<div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="enterStat">0/3</div></div>
-<button class="btn btn-enter" onclick="giveEnter()" id="enterBtn">Дал Энтеросгель</button>
+ <div class="row"><div class="l">Приёмы сегодня</div><div class="v" id="enterStat">0/3</div></div>
+<div class="dose-row" id="enterDoseRow">
+<button class="dose-btn enter" onclick="giveEnter()">① Дали</button>
+<button class="dose-btn enter" onclick="giveEnter()">② Дали</button>
+<button class="dose-btn enter" onclick="giveEnter()">③ Дали</button>
+</div>
 <div class="subnote" id="enterNote"></div>
 </div>
 
@@ -615,26 +658,27 @@
 <p>Перед сном · эмоленты после</p>
 </div>
 </div>
-<div class="row"><div class="l">Статус</div><div class="v" id="bathEStatus">Ожидание</div></div>
-<button class="btn btn-bath" onclick="markBath(0)" id="bathEBtn">Купание завершено</button>
+<div style="display:flex;align-items:center;gap:10px;">
+<span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.45);">Статус:</span>
+<span style="font-size:15px;font-weight:600;" id="bathEStatus">Ожидание</span>
+<button class="btn btn-bath" onclick="markBath(0)" id="bathEBtn" style="margin-left:auto;width:auto;padding:8px 16px;flex-shrink:0;">Искупались</button>
+</div>
 </div>
 
 <div class="card" id="sec-scheme" style="padding:14px 20px;">
 <div style="font-weight:600;font-size:15px;color:#fff;margin-bottom:10px;">💊 Схема приёма</div>
 <div class="scheme-item gold"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 4.5a6 6 0 0 0-6 6c0 2.2 1.2 4.2 3 5.2V20h6v-4.3c1.8-1 3-3 3-5.2a6 6 0 0 0-6-6z"/><path d="M9 10.5a2.5 2.5 0 0 0 1.5 2.3"/></svg><div><div class="name">Креон 10000</div><div class="desc">1 капсула во время еды, 3 раза в день</div></div></div>
-<div class="scheme-item blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#93C5FD"/></svg><div><div class="name">Энтеросгель</div><div class="desc">7 мл + 3 ч.л. воды, 3 раза в день</div></div></div>
+<div class="scheme-item sage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="#34D399"/></svg><div><div class="name">Энтеросгель</div><div class="desc">7 мл + 3 ч.л. воды, 3 раза в день</div></div></div>
 <div class="scheme-item sage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div><div class="name">Порядок приёма</div><div class="desc">Энтеросгель → 1 час → Креон (во время еды)</div></div></div>
 <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding-top:8px;">Дневные часы 06:00–21:00 · между разными лекарствами 1 час</div>
 </div>
 
 <div class="card" id="sec-hist" style="padding:16px 20px 8px;">
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:4px;">
-<button onclick="toggleAll()" style="background:none;border:none;font-size:14px;font-weight:500;color:var(--tint);cursor:pointer;font-family:inherit;padding:4px 8px;" id="allBtn">Вся история</button>
-</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:18px;">📋</span><span style="font-size:17px;font-weight:600;color:#fff;">История</span><button onclick="toggleAll()" style="margin-left:auto;background:none;border:none;font-size:14px;font-weight:500;color:var(--tint);cursor:pointer;font-family:inherit;padding:4px 8px;" id="allBtn">Вся история</button></div>
 <div id="histList"></div>
-<div style="display:flex;gap:8px;padding:12px 0 4px;border-top:1px solid var(--sep);margin-top:8px;">
-<button class="hist-reset" onclick="resetDay()">Сбросить сегодня</button>
-<button class="hist-reset" onclick="exportData()" style="margin-left:auto;">Экспорт</button>
+<div class="hist-footer">
+<button class="hbtn danger" onclick="resetDay()">✕ Сбросить сегодня</button>
+<button class="hbtn prim" onclick="exportData()">📄 Экспорт .txt</button>
 </div>
 </div>
 
@@ -663,7 +707,11 @@
   ...s, start: new Date(s.start), end: s.end ? new Date(s.end) : null,
   pauses: (s.pauses || []).map(p =>({start: new Date(p.start), end: p.end ? new Date(p.end) : null}))
  }));
- let bathM = ld('bathM'), bathE = ld('bathE');
+  let bathM = ld('bathM'), bathE = ld('bathE');
+  let nightStart = ld('nightStart');
+  let nightSleeps = JSON.parse(localStorage.getItem('nightSleeps') || '[]').map(n =>({
+    ...n, start: new Date(n.start), end: n.end ? new Date(n.end) : null
+  }));
   let curDate = new Date(); curDate.setHours(0,0,0,0);
   let editIdx = -1;
   let showAll = false;
@@ -717,43 +765,53 @@ function dur(ms) {
 
  function refresh() {
  const n = now();
- const cSt = document.getElementById('creonStat'), cBtn = document.getElementById('creonBtn'), cNt = document.getElementById('creonNote');
- const eSt = document.getElementById('enterStat'), eBtn = document.getElementById('enterBtn'), eNt = document.getElementById('enterNote');
+ const cSt = document.getElementById('creonStat'), cNt = document.getElementById('creonNote');
+ const eSt = document.getElementById('enterStat'), eNt = document.getElementById('enterNote');
 
- function medSt(cnt, otherTyp, otherNm) {
- if (cnt >= 3) return { txt: `✓ ${cnt}/3`, ok: false, nt: '' };
+ function setDoseBtns(rowId, cnt, enabled, cls) {
+  const btns = document.querySelectorAll('#' + rowId + ' .dose-btn');
+  btns.forEach((b, i) => {
+   if (i < cnt) { b.classList.add('done'); b.disabled = true; }
+   else { b.classList.remove('done'); b.disabled = !enabled; }
+  });
+ }
+
+ function medSt(cnt) {
+ if (cnt >= 3) return { txt: `✓ ${cnt}/3`, ok: false, nt: '✓ Все приёмы сделаны' };
  let cool = 0;
- if (lastMed && lastTyp === otherTyp && td(lastMed) === td(n)) {
+ if (lastMed && td(lastMed) === td(n)) {
  cool = COOL - Math.floor((n - lastMed) / 1000);
  }
- if (cool >0) return { txt: `${cnt}/3`, ok: false, nt: ` ${otherNm} через ${fm(cool)}` };
+ if (cool >0) return { txt: `${cnt}/3`, ok: false, nt: ` Через ${fm(cool)}` };
  return { txt: `${cnt}/3`, ok: true, nt: '✓ Можно давать' };
  }
 
- const cr = medSt(crN, 'enter', 'Энтеросгель');
+ const cr = medSt(crN);
  cSt.textContent = cr.txt; cSt.className = 'v' + (cr.ok ? ' ready' : cr.nt ? ' wait' : '');
- cBtn.disabled = !cr.ok; cNt.textContent = cr.nt;
+ setDoseBtns('creonDoseRow', crN || 0, cr.ok, 'creon');
+ cNt.textContent = cr.nt;
 
- const er = medSt(enN, 'creon', 'Креон');
+ const er = medSt(enN);
  eSt.textContent = er.txt; eSt.className = 'v' + (er.ok ? ' ready' : er.nt ? ' wait' : '');
- eBtn.disabled = !er.ok; eNt.textContent = er.nt;
+ setDoseBtns('enterDoseRow', enN || 0, er.ok, 'enter');
+ eNt.textContent = er.nt;
 
  const bms = document.getElementById('bathMStatus'), bmb = document.getElementById('bathMBtn');
  if (bathM && td(bathM) === td(n)) { bms.textContent = '✓ Сделано'; bms.className = 'v ready'; bmb.disabled = true; bmb.textContent = '✓ Готово'; }
- else { bms.textContent = 'Ожидание'; bms.className = 'v'; bmb.disabled = false; bmb.textContent = ' Купание завершено'; }
+ else { bms.textContent = 'Ожидание'; bms.className = 'v'; bmb.disabled = false; bmb.textContent = 'Искупались'; }
 
  const bes = document.getElementById('bathEStatus'), beb = document.getElementById('bathEBtn');
  if (bathE && td(bathE) === td(n)) { bes.textContent = '✓ Сделано'; bes.className = 'v ready'; beb.disabled = true; beb.textContent = '✓ Готово'; }
- else { bes.textContent = 'Ожидание'; bes.className = 'v'; beb.disabled = false; beb.textContent = ' Купание завершено'; }
+ else { bes.textContent = 'Ожидание'; bes.className = 'v'; beb.disabled = false; beb.textContent = 'Искупались'; }
 
  updateSleep();
  }
 
- function tapSleep() {
- const t = now(), ts = td(t);
- const i = naps.findIndex(s =>s.date === ts && !s.end);
- if (i !== -1) return; // already sleeping - use pause/wake buttons
- naps.unshift({start: t, end: null, date: ts, ds: t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}), pauses: []});
+  function tapSleep() {
+  const t = now();
+  const i = naps.findIndex(s =>!s.end);
+  if (i !== -1) return; // already sleeping - use pause/wake buttons
+  naps.unshift({start: t, end: null, date: td(t), ds: t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}), pauses: []});
  saveNaps(); tick(); renderHist();
 }
 
@@ -788,11 +846,9 @@ function pauseSleep() {
  const i = naps.findIndex(s =>s.date === ts && !s.end);
  if (i === -1) return;
  const s = naps[i];
- s.end = t;
- if (s.pauses) { const pi = s.pauses.findIndex(p => !p.end); if (pi !== -1) s.pauses[pi].end = t; }
- const eff = effDur(s);
- addHist(sName(s.start), 'sleep', s.start.toISOString(), t.toISOString(), dur(eff), s.ds, t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}));
- saveNaps(); tick(); renderHist();
+  s.end = t;
+  if (s.pauses) { const pi = s.pauses.findIndex(p => !p.end); if (pi !== -1) s.pauses[pi].end = t; }
+  saveNaps(); tick(); renderHist();
 }
 
 // Audio Player
@@ -890,6 +946,29 @@ function saveNaps() {
  }))));
 }
 
+function saveNight() {
+ if (nightStart) localStorage.setItem('nightStart', nightStart.toISOString());
+ else localStorage.removeItem('nightStart');
+ localStorage.setItem('nightSleeps', JSON.stringify(nightSleeps.map(n =>({
+  ...n, start: n.start.toISOString(), end: n.end ? n.end.toISOString() : null
+ }))));
+}
+
+function startNight() {
+ if (nightStart) return;
+ nightStart = now();
+ saveNight(); tick();
+}
+
+function wakeUpNight() {
+ const t = now();
+ if (!nightStart) return;
+ nightSleeps.push({start: nightStart, end: t});
+ addHist('Ночной сон', 'night', nightStart.toISOString(), t.toISOString(), dur(t - nightStart), nightStart.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}), t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}));
+ nightStart = null;
+ saveNight(); tick();
+}
+
 function refreshStats() {
  const ts = td(curDate);
  const dayEl = document.getElementById('sleepLast');
@@ -898,9 +977,11 @@ function refreshStats() {
  const all = naps.filter(s =>s.date === ts);
  const done = all.filter(s =>s.end);
  const act = all.find(s =>!s.end);
+ const activeNight = nightStart && ts === td(nightStart);
+ const todayNight = nightSleeps.filter(ns => ns.end && (td(ns.start) === ts || td(ns.end) === ts)).sort((a,b) => b.end - a.end)[0];
 
- // Left: current or last sleep
- const lastS = done.length ? done[done.length - 1] : null;
+  // Left: current or last sleep
+  const lastS = done.length ? done[0] : null;
  if (act) {
   const e = effDur(act);
   label.textContent = 'Текущий сон';
@@ -909,17 +990,54 @@ function refreshStats() {
   const e = effDur(lastS);
   label.textContent = 'Последний сон';
   dayEl.textContent = `${Math.floor(e / 3600000)}ч ${Math.floor((e % 3600000) / 60000)}м ${Math.floor((e % 60000) / 1000)}с`;
+ } else if (activeNight) {
+  label.textContent = 'Ночной сон';
+  dayEl.textContent = '…';
+ } else if (todayNight) {
+  const nd = todayNight.end - todayNight.start;
+  label.textContent = 'Ночной сон';
+  dayEl.textContent = `${Math.floor(nd / 3600000)}ч ${Math.floor((nd % 3600000) / 60000)}м`;
  } else {
   label.textContent = 'Последний сон';
   dayEl.textContent = '—';
  }
 
- // Right: total for the day
+ // 3: total for the day (naps + night)
  let allMs = 0;
  all.forEach(s => { if (s.end) allMs += effDur(s); });
  if (act) allMs += effDur(act);
+ if (activeNight) allMs += now() - nightStart;
+ if (todayNight) allMs += todayNight.end - todayNight.start;
  const ah = Math.floor(allMs / 3600000), am = Math.floor((allMs % 3600000) / 60000), as = Math.floor((allMs % 60000) / 1000);
  if (totEl) totEl.textContent = allMs > 0 ? `${ah}ч ${am}м ${as}с` : '—';
+
+ // 2: night sleep stat
+ const nightEl = document.getElementById('nightStat');
+ if (activeNight) {
+  const nd = now() - nightStart;
+  nightEl.textContent = `${Math.floor(nd / 3600000)}ч ${Math.floor((nd % 3600000) / 60000)}м ${Math.floor((nd % 60000) / 1000)}с`;
+ } else if (todayNight) {
+  const nd = todayNight.end - todayNight.start;
+  nightEl.textContent = `${Math.floor(nd / 3600000)}ч ${Math.floor((nd % 3600000) / 60000)}м ${Math.floor((nd % 60000) / 1000)}с`;
+ } else {
+  nightEl.textContent = '—';
+ }
+
+ // 4: awake stat
+ const awakeEl = document.getElementById('awakeStat');
+ const allEnds = [];
+ if (todayNight) allEnds.push(todayNight.end);
+ done.forEach(s => allEnds.push(s.end));
+ if (activeNight) allEnds.push(now());
+ const lastEnd = allEnds.length ? allEnds.reduce((a,b) => a > b ? a : b) : null;
+ if (act) {
+  awakeEl.textContent = '…';
+ } else if (lastEnd) {
+  const a = now() - lastEnd;
+  awakeEl.textContent = `${Math.floor(a / 3600000)}ч ${Math.floor((a % 3600000) / 60000)}м ${Math.floor((a % 60000) / 1000)}с`;
+ } else {
+  awakeEl.textContent = '—';
+ }
 }
 
  function updateSleep() {
@@ -928,7 +1046,7 @@ function refreshStats() {
  const btn = document.getElementById('sleepBtn');
  const row2 = document.getElementById('sleepRow2');
  const pauseBtn = document.getElementById('pauseBtn');
-const resumeBtn = document.getElementById('resumeBtn');
+ const resumeBtn = document.getElementById('resumeBtn');
 
  refreshStats();
 
@@ -943,83 +1061,173 @@ const resumeBtn = document.getElementById('resumeBtn');
   btn.className = 'sleep-btn prim';
   row2.style.display = 'none';
  }
+
  drawChart();
 }
 
         function editNap(idx) {
             const s = naps[idx];
-            if (!s || s.end) return;
-            const val = prompt('Изменить время начала (ЧЧ:ММ:СС):', s.ds || '');
-            if (val) {
-                const parts = val.split(':').map(Number);
-                if (!isNaN(parts[0]) && !isNaN(parts[1])) {
-                    const d = new Date(s.start);
-                    d.setHours(parts[0], parts[1], parts[2] || 0, 0);
-                    s.start = d;
-                    s.ds = val;
-                    saveNaps();
-                    drawChart();
+            if (!s) return;
+            const startStr = s.ds || s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+            const endStr = s.end ? s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '';
+            if (s.end) {
+                const val = prompt('Изменить время (ЧЧ:ММ:СС – ЧЧ:ММ:СС):', `${startStr} – ${endStr}`);
+                if (val) {
+                    const parts = val.split('–').map(s => s.trim());
+                    if (parts.length === 2) {
+                        const sp = parts[0].split(':').map(Number);
+                        const ep = parts[1].split(':').map(Number);
+                        if (!isNaN(sp[0]) && !isNaN(ep[0])) {
+                            const ds = new Date(s.start); ds.setHours(sp[0], sp[1]||0, sp[2]||0, 0);
+                            const de = new Date(s.end); de.setHours(ep[0], ep[1]||0, ep[2]||0, 0);
+                            if (de > ds) {
+                                s.start = ds; s.end = de; s.ds = parts[0];
+                                saveNaps(); drawChart(); renderHist();
+                            } else { alert('Конец должен быть позже начала'); }
+                        }
+                    }
+                }
+            } else {
+                const val = prompt('Изменить время начала (ЧЧ:ММ:СС):', startStr);
+                if (val) {
+                    const parts = val.split(':').map(Number);
+                    if (!isNaN(parts[0]) && !isNaN(parts[1])) {
+                        const d = new Date(s.start);
+                        d.setHours(parts[0], parts[1], parts[2] || 0, 0);
+                        s.start = d; s.ds = val;
+                        saveNaps(); drawChart(); renderHist();
+                    }
                 }
             }
+        }
+
+        function delNap(idx) {
+            const s = naps[idx];
+            if (!s) return;
+            if (!confirm(`Удалить запись о сне?`)) return;
+            naps.splice(idx, 1);
+            saveNaps(); tick(); renderHist();
         }
 
         function drawChart() {
             const svg = document.querySelector('#sleepVisor svg');
             if (!svg) return;
             const n = new Date();
-            const dateStr = td(curDate);
-            const sessions = naps.filter(s => s.date === dateStr);
-            const act = naps.find(s => s.date === dateStr && !s.end);
+            const nd = td(curDate);
+            const sessions = naps.filter(s => s.date === nd);
+            const act = naps.find(s => s.date === nd && !s.end);
+            const nightActiveOnDate = nightStart && td(nightStart) === nd;
+            const nightActiveAny = !!nightStart;
+            const completedNights = nightSleeps.filter(ns => td(ns.start) === nd && ns.end);
 
-            const cx = 140, cy = 140, r = 100;
-            const halfW = 16 * 60;
+            // Collect all sleep intervals for the day
+            const intervals = [];
+            sessions.forEach(s => {
+                const st = new Date(s.start);
+                const en = s.end ? new Date(s.end) : (td(curDate) === td(n) ? n : new Date(curDate));
+                intervals.push({start: st, end: en});
+            });
+            if (nightActiveOnDate) {
+                intervals.push({start: nightStart, end: n});
+            }
+            completedNights.forEach(ns => {
+                intervals.push({start: ns.start, end: ns.end});
+            });
+            // Also include sleep/night entries from hist (manually edited)
+            hist.forEach(i => {
+                if ((i.typ === 'sleep' || i.typ === 'night') && i.st && i.et && i.date === nd) {
+                    intervals.push({start: new Date(i.st), end: new Date(i.et)});
+                }
+            });
 
-            function frac(h, m) { return Math.max(0, Math.min(1, ((h - 6) * 60 + m) / halfW)); }
-            function pos(t) { const a = t * Math.PI; return {x: cx + r * Math.cos(a), y: cy + r * Math.sin(a)}; }
-
-            let htm = '';
-
-            // Track (stroke-only semicircle)
-            const left = pos(1), right = pos(0);
-            htm += `<path d="M${left.x} ${left.y} A${r} ${r} 0 0 1 ${right.x} ${right.y}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6" stroke-linecap="round"/>`;
-
-            // Sun at left end, Moon at right end
-            htm += `<text x="${left.x - 20}" y="${left.y}" text-anchor="middle" dominant-baseline="central" font-size="16">☀️</text>`;
-            htm += `<text x="${right.x + 20}" y="${right.y}" text-anchor="middle" dominant-baseline="central" font-size="16">🌙</text>`;
-
-            // Sleep arcs along the track
-            for (const s of sessions) {
-                const bs = new Date(s.start);
-                const be = s.end ? new Date(s.end) : (td(curDate) === td(n) ? n : new Date(curDate));
-                const sf = frac(bs.getHours(), bs.getMinutes());
-                const ef = frac(be.getHours(), be.getMinutes());
-                if (ef <= sf) continue;
-                const p1 = pos(sf), p2 = pos(ef);
-                const large = (ef - sf) > 0.5 ? 1 : 0;
-                const cls = s.end ? 'done' : 'now';
-                htm += `<path d="M${p1.x} ${p1.y} A${r} ${r} 0 ${large} 1 ${p2.x} ${p2.y}" fill="none" class="arc ${cls}" stroke-width="6" stroke-linecap="round"/>`;
+            // Compute sleep minutes per hour 0-23
+            const sleepPerHour = Array(24).fill(0);
+            const dayStart = new Date(curDate);
+            for (let h = 0; h < 24; h++) {
+                const hs = new Date(dayStart); hs.setHours(h, 0, 0, 0);
+                const he = new Date(dayStart); he.setHours(h + 1, 0, 0, 0);
+                for (const iv of intervals) {
+                    const ss = iv.start > hs ? iv.start : hs;
+                    const se = iv.end < he ? iv.end : he;
+                    if (se > ss) sleepPerHour[h] += (se - ss) / 60000;
+                }
             }
 
-            // Center text below
+            const W = 1000, H = 320;
+            const barW = 32, barGap = 10;
+            const colW = 41; // 24 * 41 = 984, with padL=8 fits in 1000
+            const barBot = 190, barMaxH = 140;
+            const padL = 8;
+
+            let htm = `<rect width="${W}" height="${H}" fill="none"/>`;
+
+            // Baseline
+            htm += `<line x1="0" y1="${barBot}" x2="${W}" y2="${barBot}" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;
+
+            // Compute day total for topbar (naps only)
+            let dayTot = 0;
+            sessions.forEach(s => dayTot += effDur(s));
+            if (act) dayTot += effDur(act);
+            const dH = Math.floor(dayTot / 3600000), dM = Math.floor((dayTot % 3600000) / 60000);
+            document.getElementById('stbDayTot').textContent = `${dH}ч ${dM}м`;
+            // Topbar night buttons
+            const nightOn = !!nightStart;
+            document.getElementById('stbWakeBtn').className = 'stb-btn' + (nightOn ? ' stb-prim' : '');
+            document.getElementById('stbNightBtn').className = 'stb-btn' + (!nightOn ? ' stb-prim' : '');
+
+            // Bars
+            for (let h = 0; h < 24; h++) {
+                const x = padL + h * colW + 3;
+                const sleepM = sleepPerHour[h];
+                const avail = h < n.getHours() ? 60 : (h === n.getHours() ? n.getMinutes() : 0);
+                const awakeM = Math.max(0, avail - sleepM);
+                const sleepH = (sleepM / 60) * barMaxH;
+                const awakeH = (awakeM / 60) * barMaxH;
+
+                // Gray background (full bar)
+                htm += `<rect x="${x}" y="${barBot - barMaxH}" width="${barW}" height="${barMaxH}" rx="3" fill="rgba(255,255,255,.06)"/>`;
+                // Sleep portion (purple, bottom)
+                if (sleepH > 1) {
+                    htm += `<rect x="${x}" y="${barBot - sleepH}" width="${barW}" height="${sleepH}" rx="3" fill="#A78BFA" opacity=".85"/>`;
+                }
+                // Awake portion (green, top)
+                if (awakeH > 1) {
+                    htm += `<rect x="${x}" y="${barBot - sleepH - awakeH}" width="${barW}" height="${awakeH}" rx="3" fill="#34C759" opacity=".5"/>`;
+                }
+
+                // Tick every hour, label every hour
+                htm += `<line x1="${x + barW / 2}" y1="${barBot}" x2="${x + barW / 2}" y2="${barBot + 4}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
+                htm += `<text x="${x + barW / 2}" y="${barBot + 18}" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.4)" font-family="inherit" font-weight="600">${h}</text>`;
+
+                // Sleep minutes inside bar
+                if (sleepM >= 5) {
+                    const mins = Math.round(sleepM);
+                    const labelY = barBot - sleepH / 2 + 5;
+                    htm += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(255,255,255,.7)" font-family="inherit">${mins}м</text>`;
+                }
+            }
+
+            // Status line
             let totMs = 0;
             sessions.forEach(s => totMs += effDur(s));
-            const bh = Math.floor(totMs / 3600000), bm = Math.floor((totMs % 3600000) / 60000), bsec = Math.floor((totMs % 60000) / 1000);
-            const big = totMs > 0 ? `${bh}ч ${bm}м ${bsec}с` : '—';
+            if (act) totMs += effDur(act);
+            if (nightActiveOnDate) totMs += n - nightStart;
+            completedNights.forEach(ns => totMs += ns.end - ns.start);
+            const fh = Math.floor(totMs / 3600000), fm2 = Math.floor((totMs % 3600000) / 60000), fs = Math.floor((totMs % 60000) / 1000);
+            const big = totMs > 0 ? `${fh}ч ${fm2}м ${fs}с` : '—';
 
             let awake = '—';
+            const allEnds = [];
+            completedNights.forEach(ns => allEnds.push(ns.end));
+            sessions.forEach(s => { if (s.end) allEnds.push(s.end); });
+            const lastEnd = allEnds.length ? allEnds.reduce((a,b) => a > b ? a : b) : null;
             if (act) {
                 const e = effDur(act);
                 awake = `${Math.floor(e / 3600000)}ч ${Math.floor((e % 3600000) / 60000)}м ${Math.floor((e % 60000) / 1000)}с`;
-            } else {
-                const last = sessions.filter(s => s.end).pop();
-                if (last) { const a = n - last.end; awake = `${Math.floor(a / 3600000)}ч ${Math.floor((a % 3600000) / 60000)}м ${Math.floor((a % 60000) / 1000)}с`; }
+            } else if (lastEnd) {
+                const a = n - lastEnd;
+                awake = `${Math.floor(a / 3600000)}ч ${Math.floor((a % 3600000) / 60000)}м ${Math.floor((a % 60000) / 1000)}с`;
             }
-
-            const status = act ? (act.pauses?.find(p => !p.end) ? 'пауза' : 'сплю') : 'сон за день';
-            const txtY = cy + 10;
-            htm += `<text x="${cx}" y="${txtY - 16}" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">${big}</text>`;
-            htm += `<text x="${cx}" y="${txtY + 4}" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.3)">${status}</text>`;
-            htm += `<text x="${cx}" y="${txtY + 22}" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.2)">бодрствует ${awake}</text>`;
 
             svg.innerHTML = htm;
         }
@@ -1054,12 +1262,12 @@ const resumeBtn = document.getElementById('resumeBtn');
         function renderHist() {
             const el = document.getElementById('histList');
             if (!el) return;
-            const tp = {'creon':'cr','enterosgel':'en','bath':'ba','sleep':'sl'};
+            const tp = {'creon':'cr','enterosgel':'en','bath':'ba','sleep':'sl','night':'sl'};
 
             if (showAll) {
                 if (!hist.length && !naps.length) { el.innerHTML = '<div class="empty">Нет записей</div>'; return; }
                 const grp = {};
-                naps.forEach(s => { if (!grp[s.date]) grp[s.date] = []; grp[s.date].push({type:'nap', data:s}); });
+                naps.forEach((s, si) => { if (!grp[s.date]) grp[s.date] = []; grp[s.date].push({type:'nap', data:s, idx:si}); });
                 hist.forEach((i, idx) => { if (!grp[i.date]) grp[i.date] = []; if (i.typ !== 'sleep') grp[i.date].push({type:'hist', data:i, idx}); });
                 const dates = Object.keys(grp).sort((a,b) => new Date(b)-new Date(a));
                 const fmtD = d => { const t = new Date().toDateString(); if (d===t) return 'Сегодня'; if (d===new Date(Date.now()-864e5).toDateString()) return 'Вчера'; return new Date(d).toLocaleDateString('ru-RU', {day:'numeric',month:'long'}); };
@@ -1069,15 +1277,16 @@ const resumeBtn = document.getElementById('resumeBtn');
                         if (item.type === 'nap') {
                             const s = item.data;
                             const st = s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                            const ni = item.idx;
                             if (s.end) {
                                 const et = s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
-                                return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(effDur(s))}</span></div><span class="time">${st}–${et}</span></div></div>`;
+                                return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(effDur(s))}</span></div><span class="time">${st}–${et}</span><button class="act" onclick="editNap(${ni})" title="Изменить">✎</button><button class="act del" onclick="delNap(${ni})" title="Удалить">×</button></div></div>`;
                             }
-                            return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span></div></div>`;
+                            return `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span><button class="act" onclick="editNap(${ni})" title="Изменить">✎</button><button class="act del" onclick="delNap(${ni})" title="Удалить">×</button></div></div>`;
                         }
                         const i = item.data;
                         const c = tp[i.typ] || 'ba';
-                        const r = i.typ === 'sleep' && i.sd;
+                        const r = (i.typ === 'sleep' || i.typ === 'night') && i.sd;
                         return `<div class="hist-row ${c}"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${i.med}</span>${r ? `<span class="dur">${i.dt}</span>` : ''}</div><span class="time">${r ? `${i.sd}–${i.ed}` : i.display}</span><button class="act" onclick="openModal(${item.idx})" title="Изменить">✎</button><button class="act del" onclick="delHist(${item.idx})" title="Удалить">×</button></div></div>`;
                     }).join('')}
                 `).join('');
@@ -1087,21 +1296,21 @@ const resumeBtn = document.getElementById('resumeBtn');
             const sd = td(curDate);
             const rows = [];
 
-            naps.forEach(s => {
+            naps.forEach((s, si) => {
                 if (s.date !== sd) return;
                 const st = s.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
                 if (s.end) {
                     const et = s.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(s.end - s.start)}</span></div><span class="time">${st}–${et}</span></div></div>`});
+                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">${dur(s.end - s.start)}</span></div><span class="time">${st}–${et}</span><button class="act" onclick="editNap(${si})" title="Изменить">✎</button><button class="act del" onclick="delNap(${si})" title="Удалить">×</button></div></div>`});
                 } else {
-                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span></div></div>`});
+                    rows.push({typ:'sleep', time: s.start, html: `<div class="hist-row sl"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${sName(s.start)}</span><span class="dur">спит</span></div><span class="time">${st}–…</span><button class="act" onclick="editNap(${si})" title="Изменить">✎</button><button class="act del" onclick="delNap(${si})" title="Удалить">×</button></div></div>`});
                 }
             });
 
             hist.forEach((i, idx) => {
                 if (i.date !== sd || i.typ === 'sleep') return;
                 const c = tp[i.typ] || 'ba';
-                const r = i.typ === 'sleep' && i.sd;
+                const r = (i.typ === 'sleep' || i.typ === 'night') && i.sd;
                 rows.push({typ: i.typ, time: new Date(i.time), html: `<div class="hist-row ${c}"><div class="bar"></div><div class="body"><div class="left"><span class="badge">${i.med}</span>${r ? `<span class="dur">${i.dt}</span>` : ''}</div><span class="time">${r ? `${i.sd}–${i.ed}` : i.display}</span><button class="act" onclick="openModal(${idx})" title="Изменить">✎</button><button class="act del" onclick="delHist(${idx})" title="Удалить">×</button></div></div>`});
             });
 
@@ -1117,6 +1326,7 @@ const resumeBtn = document.getElementById('resumeBtn');
         }
 
         function exportData() {
+            const today = new Date().toISOString().slice(0,10);
             let text = 'Дневник Леона\n';
             text += '='.repeat(40) + '\n\n';
 
@@ -1124,10 +1334,11 @@ const resumeBtn = document.getElementById('resumeBtn');
             const dates = new Set();
             naps.forEach(s => dates.add(s.date));
             hist.forEach(i => dates.add(i.date));
+            nightSleeps.forEach(ns => dates.add(td(ns.start)));
             const sorted = [...dates].sort();
 
             for (const d of sorted) {
-                const dt = new Date(d + 'T00:00:00');
+                const dt = new Date(d);
                 text += dt.toLocaleDateString('ru-RU', {day:'numeric',month:'long',year:'numeric'}) + '\n';
                 text += '-'.repeat(30) + '\n';
 
@@ -1143,11 +1354,20 @@ const resumeBtn = document.getElementById('resumeBtn');
                         text += `  Сон: ${st}–… (не закончен)\n`;
                     }
                 }
+                // Night sleeps
+                const dayNights = nightSleeps.filter(ns => td(ns.start) === d && ns.end);
+                for (const ns of dayNights) {
+                    const st = ns.start.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                    const et2 = ns.end.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+                    const nd2 = Math.floor((ns.end - ns.start) / 1000);
+                    const nh = Math.floor(nd2 / 3600), nm = Math.floor((nd2 % 3600) / 60);
+                    text += `  Ночной сон: ${st}–${et2} (${nh}ч ${nm}м)\n`;
+                }
 
                 const dayHist = hist.filter(i => i.date === d).sort((a,b) => new Date(a.time) - new Date(b.time));
                 for (const i of dayHist) {
                     const t = new Date(i.time).toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
-                    if (i.typ === 'sleep' && i.sd) {
+                    if (i.sd && i.ed) {
                         text += `  ${i.med}: ${i.sd}–${i.ed} (${i.dt})\n`;
                     } else {
                         text += `  ${i.med}: ${t}\n`;
@@ -1160,7 +1380,7 @@ const resumeBtn = document.getElementById('resumeBtn');
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Леон-${new Date().toISOString().slice(0,10)}.txt`;
+            a.download = `Леон-${today}.txt`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -1168,15 +1388,15 @@ const resumeBtn = document.getElementById('resumeBtn');
         function delHist(idx) {
  const i = hist[idx]; if (!i) return;
  if (!confirm(`Удалить «${i.med}»?`)) return;
- hist.splice(idx, 1); localStorage.setItem('hist', JSON.stringify(hist));
- renderHist();
+  hist.splice(idx, 1); localStorage.setItem('hist', JSON.stringify(hist));
+  renderHist(); drawChart();
  }
 
  function openModal(idx) {
  editIdx = idx; const i = hist[idx]; if (!i) return;
  const b = document.getElementById('modalBody');
  const ic = {'creon':'','enterosgel':'','bath':'','sleep':''};
- const r = i.typ === 'sleep' && i.sd;
+ const r = (i.typ === 'sleep' || i.typ === 'night') && i.sd;
  let h = `<div class="tag">${ic[i.typ]||''} ${i.med}</div>`;
  if (r) {
  h += `<div class="field"><label class="label">Начало</label><input type="time" step="1" id="mSt" value="${i.sd}"></div>`;
@@ -1191,16 +1411,17 @@ const resumeBtn = document.getElementById('resumeBtn');
 
  function saveModal() {
  const i = hist[editIdx]; if (!i) return;
- const r = i.typ === 'sleep' && document.getElementById('mSt');
+ const r = (i.typ === 'sleep' || i.typ === 'night') && document.getElementById('mSt');
  if (r) {
  const sv = document.getElementById('mSt').value, ev = document.getElementById('mEt').value;
  if (sv && ev) {
  const n = new Date(i.et || i.time);
  const [sh,sm,ss] = sv.split(':').map(Number);
  const [eh,em,es] = ev.split(':').map(Number);
- const sd = new Date(n); sd.setHours(sh,sm,ss||0,0);
- const ed = new Date(n); ed.setHours(eh,em,es||0,0);
- i.st = sd.toISOString(); i.et = ed.toISOString();
+  const sd = new Date(n); sd.setHours(sh,sm,ss||0,0);
+  const ed = new Date(n); ed.setHours(eh,em,es||0,0);
+  if (ed <= sd) { alert('Конец должен быть позже начала'); return; }
+  i.st = sd.toISOString(); i.et = ed.toISOString();
  i.sd = sv; i.ed = ev; i.dt = dur(ed-sd);
  i.time = ed.toISOString(); i.display = ev;
  }
@@ -1212,8 +1433,8 @@ const resumeBtn = document.getElementById('resumeBtn');
  i.time = d.toISOString(); i.display = d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
  }
  }
- localStorage.setItem('hist', JSON.stringify(hist));
- closeModal(); renderHist();
+  localStorage.setItem('hist', JSON.stringify(hist));
+  closeModal(); renderHist(); drawChart();
  }
 
  function closeModal() { document.getElementById('modal').style.display = 'none'; editIdx = -1; }
@@ -1247,8 +1468,8 @@ const resumeBtn = document.getElementById('resumeBtn');
                 const dayName = days[d.getDay()];
                 const month = d.toLocaleDateString('ru-RU', {month:'short'}).replace('.','');
                 html += `<button class="d${sel?' sel':''}${isToday?' today':''}" onclick="goDate('${d.toDateString()}')">
-                    <span class="dw">${sel ? '' : dayName}</span>
-                    <span class="dn">${sel ? month+' ' : ''}${dayNum}</span>
+                    <span class="dw">${isToday ? 'сегодня' : (sel ? '' : dayName)}</span>
+                    <span class="dn">${isToday ? dayNum : (sel ? month+' ' : '')}${isToday ? '' : dayNum}</span>
                 </button>`;
             }
             strip.innerHTML = html;
@@ -1277,9 +1498,11 @@ const resumeBtn = document.getElementById('resumeBtn');
  hist = hist.filter(i =>i.date !== t); localStorage.setItem('hist', JSON.stringify(hist));
  naps = naps.filter(s =>s.date !== t); saveNaps();
  crN = 0; enN = 0; lastMed = null; lastTyp = null; saveMeds();
- localStorage.removeItem('bathM'); localStorage.removeItem('bathE');
- bathM = null; bathE = null;
- tick(); renderHist();
+  localStorage.removeItem('bathM'); localStorage.removeItem('bathE');
+  bathM = null; bathE = null;
+  if (nightStart && td(nightStart) === t) nightStart = null;
+  nightSleeps = nightSleeps.filter(ns => td(ns.start) !== t); saveNight();
+  tick(); renderHist();
  }
 
          function init() {
