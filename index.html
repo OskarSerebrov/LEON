@@ -1419,7 +1419,8 @@ function refreshStats() {
       <button class="cst-btn" onclick="addCustomEvt('enter','💊')">Энтеросгель</button>
       <button class="cst-btn" onclick="addCustomEvt('bathM','🛁')">Купание утром</button>
       <button class="cst-btn" onclick="addCustomEvt('bathE','🛁')">Купание вечером</button>
-      <button class="cst-btn" onclick="addCustomEvt('sleep','😴')">Сон</button>
+      <button class="cst-btn" onclick="addCustomEvt('daySleep','😴')">Дневной сон</button>
+      <button class="cst-btn" onclick="addCustomEvt('nightSleep','🌙')">Ночной сон</button>
       <button class="cst-btn" onclick="addCustomEvt('wake','☀️')">Проснулись</button>
     </div>
   `;
@@ -1435,8 +1436,11 @@ function refreshStats() {
    case 'enter': giveEnter(); break;
    case 'bathM': markBath(1); break;
    case 'bathE': markBath(0); break;
-   case 'sleep':
-    addHist('😴 Сон', 'event');
+   case 'daySleep':
+    addHist('😴 Дневной сон', 'event');
+    break;
+   case 'nightSleep':
+    addHist('🌙 Ночной сон', 'event');
     break;
    case 'wake':
     addHist('☀️ Проснулись', 'event');
