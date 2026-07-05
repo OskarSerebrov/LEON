@@ -48,7 +48,7 @@
  .container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
 
  .header {
- padding: 28px 0 8px;
+ padding: 100px 0 8px;
  text-align: center;
  }
  .header .title { font-size: 42px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
@@ -70,10 +70,11 @@
  .header .clock {
  font-size: 17px;
  font-weight: 600;
- color: var(--tint);
+ color: var(--tint-light);
  margin-top: 6px;
  letter-spacing: .5px;
  }
+ .header-date { font-size: 13px; color: rgba(255,255,255,.35); margin-top: 4px; font-weight: 500; }
 
  .card {
  background: var(--card);
@@ -184,6 +185,27 @@
  .sleep-btn.prim { background: linear-gradient(135deg, #7C3AED, #6D28D9); color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,.3); }
  .sleep-btn.sec { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.1); }
  .sleep-btn.sec:hover { background: rgba(255,255,255,.12); }
+
+ .card-player { padding: 14px 20px; }
+ .player-tracks { display: flex; gap: 8px; margin-bottom: 10px; }
+ .track-btn { flex: 1; padding: 10px 8px; border-radius: 12px; background: rgba(255,255,255,.05); color: rgba(255,255,255,.4); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s; text-align: center; border: 1px solid transparent; }
+ .track-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+ .track-btn.active { background: rgba(124,58,237,.15); border-color: rgba(124,58,237,.3); color: #C4B5FD; }
+ .player-ctrls { display: flex; gap: 12px; justify-content: center; align-items: center; margin-bottom: 6px; }
+ .p-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255,255,255,.06); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+ .p-btn:hover { background: rgba(255,255,255,.1); }
+ .p-btn.playing { background: var(--tint); box-shadow: 0 4px 16px rgba(124,58,237,.3); }
+ .p-btn.repeat { background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); }
+ .player-info { text-align: center; font-size: 12px; color: rgba(255,255,255,.25); margin-top: 2px; }
+ .prog-wrap { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; }
+ .prog-time { font-size: 11px; color: rgba(255,255,255,.3); font-weight: 500; min-width: 36px; text-align: center; font-variant-numeric: tabular-nums; }
+ .prog-bar { flex: 1; height: 6px; background: rgba(255,255,255,.08); border-radius: 3px; position: relative; cursor: pointer; }
+ .prog-fill { height: 100%; width: 0%; background: var(--tint); border-radius: 3px; }
+ .prog-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: -4px; margin-left: -7px; left: 0%; box-shadow: 0 1px 4px rgba(0,0,0,.3); display: none; }
+ .prog-bar:hover .prog-thumb { display: block; }
+ .vol-wrap { display: flex; align-items: center; gap: 6px; justify-content: center; margin-top: 6px; }
+ .vol-slider { width: 80px; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,.1); border-radius: 2px; outline: none; cursor: pointer; }
+ .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 
  .subnote {
  font-size: 13px;
@@ -499,10 +521,34 @@
 <body>
 <div class="container">
 <div class="header">
-<div class="title"><span>Леон</span></div>
+<div class="title">🦁 <span>Леон</span></div>
 <div class="clock" id="clock"></div>
 <div class="date-strip" id="dateStrip"></div>
 <div class="sec-nav" id="secNav"></div>
+</div>
+
+<div class="card card-player" id="sec-player">
+<div class="player-tracks" id="playerTracks">
+<button class="track-btn" data-track="0">🌊 Шум</button>
+<button class="track-btn" data-track="1">⛈ Гроза</button>
+</div>
+<div class="prog-wrap">
+<div class="prog-time" id="progCurrent">0:00</div>
+<div class="prog-bar" id="progBar"><div class="prog-fill" id="progFill"></div><div class="prog-thumb" id="progThumb"></div></div>
+<div class="prog-time" id="progTotal">0:00</div>
+</div>
+<div class="player-ctrls">
+<button class="p-btn" onclick="togglePlay()" id="playBtn"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
+<button class="p-btn" onclick="stopPlay()"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12H6z"/></svg></button>
+<button class="p-btn" onclick="toggleRepeat()" id="repeatBtn"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
+</div>
+<div class="vol-wrap">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+<input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="1">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+</div>
+<div class="player-info" id="playerInfo">Выберите трек</div>
+<audio id="player" playsinline webkit-playsinline></audio>
 </div>
 
 <div class="card sleep-card" id="sleepCard">
@@ -649,7 +695,8 @@
  return `${h}:${String(m).padStart(2,'0')}:${String(se).padStart(2,'0')}`;
  }
 
- function dur(ms) {
+ function fmtTime(sec) { const m = Math.floor(sec / 60); const s = Math.floor(sec % 60); return `${m}:${String(s).padStart(2,'0')}`; }
+function dur(ms) {
  const t = Math.floor(ms/1000), h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60;
  if (h) return `${h}ч ${m}м ${s}с`;
  if (m) return `${m}м ${s}с`;
@@ -662,7 +709,8 @@
  }
 
  function tick() {
- document.getElementById('clock').textContent = now().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const n = now();
+  document.getElementById('clock').textContent = `время ${n.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'})} · ${n.toLocaleDateString('ru-RU', {day:'numeric',month:'long',year:'numeric'})}`;
  refresh();
  }
 
@@ -744,6 +792,89 @@ function pauseSleep() {
  const eff = effDur(s);
  addHist(sName(s.start), 'sleep', s.start.toISOString(), t.toISOString(), dur(eff), s.ds, t.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',second:'2-digit'}));
  saveNaps(); tick(); renderHist();
+}
+
+// Audio Player
+const player = document.getElementById('player');
+let currentTrack = 0;
+let isRepeating = false;
+const tracks = [
+  { name: 'Шум', src: 'Шум.mp3' },
+  { name: 'Гроза', src: 'Гроза.mp3' }
+];
+
+function initPlayer() {
+  const volSlider = document.getElementById('volSlider');
+  volSlider.addEventListener('input', () => { player.volume = volSlider.value; });
+
+  const btns = document.querySelectorAll('.track-btn');
+  btns.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTrack = i;
+      player.src = tracks[i].src;
+      player.play().then(() => {
+        document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+        document.getElementById('playBtn').classList.add('playing');
+        document.getElementById('playerInfo').textContent = '🎵 ' + tracks[i].name;
+      }).catch(() => {});
+    });
+  });
+  player.addEventListener('timeupdate', () => {
+    if (player.duration) {
+      const pct = player.currentTime / player.duration * 100;
+      document.getElementById('progFill').style.width = pct + '%';
+      document.getElementById('progThumb').style.left = pct + '%';
+      document.getElementById('progCurrent').textContent = fmtTime(player.currentTime);
+    }
+  });
+  player.addEventListener('loadedmetadata', () => {
+    document.getElementById('progTotal').textContent = fmtTime(player.duration);
+  });
+  const bar = document.getElementById('progBar');
+  bar.addEventListener('click', (e) => {
+    const rect = bar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    player.currentTime = pct * player.duration;
+  });
+  player.addEventListener('ended', () => {
+    if (isRepeating) { player.play(); }
+    else {
+      document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+      document.getElementById('playBtn').classList.remove('playing');
+    }
+  });
+}
+
+function togglePlay() {
+  if (player.paused) {
+    if (!player.src) { player.src = tracks[currentTrack].src; }
+    player.play().then(() => {
+      document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+      document.getElementById('playBtn').classList.add('playing');
+      document.getElementById('playerInfo').textContent = '🎵 ' + tracks[currentTrack].name;
+    }).catch(() => {});
+  } else {
+    player.pause();
+    document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+    document.getElementById('playBtn').classList.remove('playing');
+    document.getElementById('playerInfo').textContent = '⏸ ' + tracks[currentTrack].name;
+  }
+}
+
+function stopPlay() {
+  player.pause();
+  player.currentTime = 0;
+  document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+  document.getElementById('playBtn').classList.remove('playing');
+  document.getElementById('playerInfo').textContent = 'Выберите трек';
+  document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+}
+
+function toggleRepeat() {
+  isRepeating = !isRepeating;
+  document.getElementById('repeatBtn').classList.toggle('repeat', isRepeating);
 }
 
 function effDur(s) {
@@ -1152,9 +1283,9 @@ const resumeBtn = document.getElementById('resumeBtn');
  tick(); renderHist();
  }
 
-        function init() {
+         function init() {
             renderSecNav();
-            tick(); renderHist(); renderDateStrip(); 
+            tick(); renderHist(); renderDateStrip(); initPlayer();
 
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(e => {

@@ -1,9 +1,11 @@
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const CACHE = 'leon-v' + CACHE_VERSION;
 const URLS = [
   'index.html',
   'manifest.json',
-  'icon.svg'
+  'icon.svg',
+  'Гроза.mp3',
+  'Шум.mp3'
 ];
 
 self.addEventListener('install', e => {
