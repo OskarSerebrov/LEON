@@ -1,4 +1,4 @@
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 6;
 const CACHE = 'leon-v' + CACHE_VERSION;
 const URLS = [
   'index.html',
