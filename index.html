@@ -839,9 +839,9 @@ function initPlayer() {
     const pct = (e.clientX - rect.left) / rect.width;
     player.currentTime = pct * player.duration;
   });
-  player.addEventListener('ended', () => {
-    if (isRepeating) { player.play(); }
-    else {
+   player.addEventListener('ended', () => {
+     if (isRepeating) { player.loop = true; player.play(); }
+     else {
       document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
       document.getElementById('playBtn').classList.remove('playing');
     }
@@ -875,6 +875,7 @@ function stopPlay() {
 
 function toggleRepeat() {
   isRepeating = !isRepeating;
+  player.loop = isRepeating;
   document.getElementById('repeatBtn').classList.toggle('repeat', isRepeating);
 }
 
