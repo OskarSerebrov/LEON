@@ -876,11 +876,10 @@ function startPlayback() {
   document.getElementById('progTotal').textContent = fmtTime(trackDuration);
 
   // Progress updates
+  sourceNode._startTime = audioCtx.currentTime;
   clearInterval(window._progInt);
   window._progInt = setInterval(() => {
     if (isPlaying && audioCtx && sourceNode) {
-      const ct = seekTo + (audioCtx.currentTime - (sourceNode._startTime || audioCtx.currentTime));
-      sourceNode._startTime = sourceNode._startTime || audioCtx.currentTime;
       const elapsed = audioCtx.currentTime - sourceNode._startTime;
       const pct = Math.min(100, (elapsed / trackDuration) * 100);
       document.getElementById('progFill').style.width = pct + '%';
@@ -889,9 +888,9 @@ function startPlayback() {
     }
   }, 200);
 
-  sourceNode.addEventListener('ended', () => {
-    if (isRepeating) { sourceNode.loop = true; }
-  });
+  sourceNode.onended = () => {
+    if (!isRepeating) { stopPlayback(); updatePlayUI(false); }
+  };
 }
 
 function stopPlayback() {
@@ -914,7 +913,6 @@ function updatePlayUI(playing) {
 
 function togglePlay() {
   if (isPlaying) {
-    // Pause via Web Audio API - need to stop and save position
     if (sourceNode && audioCtx) {
       const elapsed = audioCtx.currentTime - (sourceNode._startTime || audioCtx.currentTime);
       seekTo = elapsed;
@@ -924,7 +922,6 @@ function togglePlay() {
       seekTo = player.currentTime;
       isPlaying = false;
     }
-    isPlaying = false;
     updatePlayUI(false);
     document.getElementById('playerInfo').textContent = '⏸ ' + tracks[currentTrack].name;
   } else {
@@ -935,8 +932,8 @@ function togglePlay() {
       player.currentTime = seekTo;
       player.loop = isRepeating;
       player.play().then(() => { isPlaying = true; updatePlayUI(true); }).catch(() => {});
+      updatePlayUI(true);
     }
-    updatePlayUI(true);
   }
 }
 
