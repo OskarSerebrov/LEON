@@ -34,15 +34,16 @@
  font-variant-numeric: tabular-nums;
  }
 
- body {
- font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
- background: var(--bg);
- background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,.12) 0%, transparent 100%);
- min-height: 100vh;
- padding: 0 0 20px;
- color: var(--text);
- -webkit-font-smoothing: antialiased;
- }
+  body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,.12) 0%, transparent 100%);
+  min-height: 100vh;
+  padding: env(safe-area-inset-top, 20px) 0 20px;
+  padding: constant(safe-area-inset-top, 20px) 0 20px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  }
 
  .container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
 
