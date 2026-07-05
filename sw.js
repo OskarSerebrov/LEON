@@ -1,4 +1,5 @@
-const CACHE = 'leon-v1';
+const CACHE_VERSION = 2;
+const CACHE = 'leon-v' + CACHE_VERSION;
 const URLS = [
   'index.html',
   'manifest.json',
