@@ -797,16 +797,30 @@ function pauseSleep() {
 
 // Audio Player
 const player = document.getElementById('player');
+let audioCtx = null;
+let sourceNode = null;
+let gainNode = null;
+let isPlaying = false;
 let currentTrack = 0;
 let isRepeating = false;
 const tracks = [
   { name: 'Шум', src: 'Шум.mp3' },
   { name: 'Гроза', src: 'Гроза.mp3' }
 ];
+let buffers = {};
+let trackDuration = 0;
+let seekTo = 0;
 
 function initPlayer() {
   const volSlider = document.getElementById('volSlider');
-  volSlider.addEventListener('input', () => { player.volume = volSlider.value; });
+  volSlider.addEventListener('input', () => { if (gainNode) gainNode.gain.value = volSlider.value; });
+
+  // Preload buffers
+  tracks.forEach((t, i) => {
+    fetch(t.src).then(r => r.arrayBuffer()).then(buf => {
+      (audioCtx || (audioCtx = new (window.AudioContext || window.webkitAudioContext)())).decodeAudioData(buf, (decoded) => { buffers[i] = decoded; });
+    }).catch(() => {});
+  });
 
   const btns = document.querySelectorAll('.track-btn');
   btns.forEach((btn, i) => {
@@ -814,68 +828,135 @@ function initPlayer() {
       btns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentTrack = i;
-      player.src = tracks[i].src;
-      player.play().then(() => {
-        document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
-        document.getElementById('playBtn').classList.add('playing');
-        document.getElementById('playerInfo').textContent = '🎵 ' + tracks[i].name;
-      }).catch(() => {});
+      stopPlayback();
+      startPlayback();
     });
   });
-  player.addEventListener('timeupdate', () => {
-    if (player.duration) {
-      const pct = player.currentTime / player.duration * 100;
-      document.getElementById('progFill').style.width = pct + '%';
-      document.getElementById('progThumb').style.left = pct + '%';
-      document.getElementById('progCurrent').textContent = fmtTime(player.currentTime);
-    }
-  });
-  player.addEventListener('loadedmetadata', () => {
-    document.getElementById('progTotal').textContent = fmtTime(player.duration);
-  });
+
   const bar = document.getElementById('progBar');
   bar.addEventListener('click', (e) => {
     const rect = bar.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
-    player.currentTime = pct * player.duration;
-  });
-   player.addEventListener('ended', () => {
-     if (isRepeating) { player.loop = true; player.play(); }
-     else {
-      document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
-      document.getElementById('playBtn').classList.remove('playing');
+    if (buffers[currentTrack]) {
+      trackDuration = buffers[currentTrack].duration;
+      seekTo = pct * trackDuration;
+      if (isPlaying) { stopPlayback(); startPlayback(); }
+    } else {
+      player.currentTime = pct * (player.duration || 1);
     }
   });
 }
 
-function togglePlay() {
-  if (player.paused) {
-    if (!player.src) { player.src = tracks[currentTrack].src; }
+function startPlayback() {
+  const buf = buffers[currentTrack];
+  if (!buf) {
+    // Fallback to audio element
+    player.src = tracks[currentTrack].src;
+    player.loop = isRepeating;
     player.play().then(() => {
-      document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
-      document.getElementById('playBtn').classList.add('playing');
-      document.getElementById('playerInfo').textContent = '🎵 ' + tracks[currentTrack].name;
+      isPlaying = true;
+      updatePlayUI(true);
     }).catch(() => {});
+    return;
+  }
+
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  sourceNode = audioCtx.createBufferSource();
+  sourceNode.buffer = buf;
+  sourceNode.loop = isRepeating;
+  gainNode = gainNode || audioCtx.createGain();
+  gainNode.gain.value = document.getElementById('volSlider').value;
+  sourceNode.connect(gainNode).connect(audioCtx.destination);
+  sourceNode.start(0, seekTo);
+  isPlaying = true;
+  trackDuration = buf.duration;
+  updatePlayUI(true);
+  document.getElementById('progTotal').textContent = fmtTime(trackDuration);
+
+  // Progress updates
+  clearInterval(window._progInt);
+  window._progInt = setInterval(() => {
+    if (isPlaying && audioCtx && sourceNode) {
+      const ct = seekTo + (audioCtx.currentTime - (sourceNode._startTime || audioCtx.currentTime));
+      sourceNode._startTime = sourceNode._startTime || audioCtx.currentTime;
+      const elapsed = audioCtx.currentTime - sourceNode._startTime;
+      const pct = Math.min(100, (elapsed / trackDuration) * 100);
+      document.getElementById('progFill').style.width = pct + '%';
+      document.getElementById('progThumb').style.left = pct + '%';
+      document.getElementById('progCurrent').textContent = fmtTime(elapsed);
+    }
+  }, 200);
+
+  sourceNode.addEventListener('ended', () => {
+    if (isRepeating) { sourceNode.loop = true; }
+  });
+}
+
+function stopPlayback() {
+  if (sourceNode) { try { sourceNode.stop(); } catch(e) {} sourceNode = null; }
+  clearInterval(window._progInt);
+  isPlaying = false;
+  seekTo = 0;
+}
+
+function updatePlayUI(playing) {
+  if (playing) {
+    document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+    document.getElementById('playBtn').classList.add('playing');
+    document.getElementById('playerInfo').textContent = '🎵 ' + tracks[currentTrack].name;
   } else {
-    player.pause();
     document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
     document.getElementById('playBtn').classList.remove('playing');
+  }
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    // Pause via Web Audio API - need to stop and save position
+    if (sourceNode && audioCtx) {
+      const elapsed = audioCtx.currentTime - (sourceNode._startTime || audioCtx.currentTime);
+      seekTo = elapsed;
+      stopPlayback();
+    } else {
+      player.pause();
+      seekTo = player.currentTime;
+      isPlaying = false;
+    }
+    isPlaying = false;
+    updatePlayUI(false);
     document.getElementById('playerInfo').textContent = '⏸ ' + tracks[currentTrack].name;
+  } else {
+    if (buffers[currentTrack]) {
+      startPlayback();
+    } else {
+      player.src = tracks[currentTrack].src;
+      player.currentTime = seekTo;
+      player.loop = isRepeating;
+      player.play().then(() => { isPlaying = true; updatePlayUI(true); }).catch(() => {});
+    }
+    updatePlayUI(true);
   }
 }
 
 function stopPlay() {
-  player.pause();
-  player.currentTime = 0;
-  document.getElementById('playBtn').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
-  document.getElementById('playBtn').classList.remove('playing');
+  stopPlayback();
+  if (!player.paused) { player.pause(); player.currentTime = 0; }
+  seekTo = 0;
+  isPlaying = false;
+  updatePlayUI(false);
   document.getElementById('playerInfo').textContent = 'Выберите трек';
   document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('progFill').style.width = '0%';
+  document.getElementById('progThumb').style.left = '0%';
+  document.getElementById('progCurrent').textContent = '0:00';
 }
 
 function toggleRepeat() {
   isRepeating = !isRepeating;
   player.loop = isRepeating;
+  if (sourceNode) sourceNode.loop = isRepeating;
   document.getElementById('repeatBtn').classList.toggle('repeat', isRepeating);
 }
 
