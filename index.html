@@ -451,10 +451,12 @@
 
  .modal-overlay {
  position: fixed; inset: 0;
- background: rgba(0,0,0,.4);
+ background: rgba(0,0,0,.3);
  z-index: 100; display: none;
  align-items: center; justify-content: center;
  padding: 24px;
+ backdrop-filter: blur(8px);
+ -webkit-backdrop-filter: blur(8px);
  }
 
 .modal {
@@ -489,7 +491,7 @@
   color: #fff;
   }
 
- .modal-body .field { margin-bottom: 14px; }
+ .modal-body .field { width: 100%; margin-bottom: 14px; }
 
  .modal-body .field label {
  display: block;
@@ -500,8 +502,9 @@
  letter-spacing: .5px;
  }
 
+.modal-body { width: 100%; min-width: 0; }
 .modal-body .field input {
-  width: 100%; padding: 10px 14px;
+  width: 100%; max-width: 100%; min-width: 0; padding: 10px 14px;
   border: 2px solid rgba(255,255,255,.1);
   border-radius: var(--rs);
   font-size: 17px; font-weight: 600;
