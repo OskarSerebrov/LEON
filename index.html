@@ -1176,7 +1176,7 @@ function refreshStats() {
             }
 
             const W = 1000, H = 320;
-            const barW = 32, barGap = 10;
+            const barW = 22, barGap = 10;
             const colW = 41; // 24 * 41 = 984, with padL=8 fits in 1000
             const barBot = 190, barMaxH = 140;
             const padL = 8;
@@ -1199,7 +1199,7 @@ function refreshStats() {
 
             // Bars
             for (let h = 0; h < 24; h++) {
-                const x = padL + h * colW + 3;
+                const x = padL + h * colW + Math.round((colW - barW) / 2);
                 const sleepM = sleepPerHour[h];
                 const avail = h < n.getHours() ? 60 : (h === n.getHours() ? n.getMinutes() : 0);
                 const awakeM = Math.max(0, avail - sleepM);
